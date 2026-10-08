@@ -2,18 +2,20 @@ package ch.alexb.tower.ui;
 
 import java.awt.*;
 
-public class Enemy {
+public class FastEnemy {
     private int x;
     private int y;
-    private int leben = 3;
-    private int geschwindigkeit = 2;
+    private int leben = 2;
+    private int geschwindigkeit = 4;
 
-    public void normalEnemySpawn(Graphics g, int curenty){
+
+    public void fastEnemySpawn(Graphics g, int curenty){
         y = curenty;
-        g.setColor(Color.BLACK);
+        g.setColor(Color.PINK);
         g.fillOval(x,y + 35, 30, 30 );
-
     }
+
+
 
     public void bewegen(){
         x += geschwindigkeit;
@@ -36,5 +38,3 @@ public class Enemy {
         leben -= schaden;
     }
 }
-
-

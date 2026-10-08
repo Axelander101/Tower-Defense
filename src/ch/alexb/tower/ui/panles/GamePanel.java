@@ -1,5 +1,7 @@
 package ch.alexb.tower.ui.panles;
 
+import ch.alexb.tower.ui.*;
+
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.*;
@@ -11,8 +13,8 @@ import java.util.Random;
 public class GamePanel extends JPanel implements MouseListener {
 
     ArrayList<Enemy> enemies = new ArrayList<>();
-    ArrayList<fastEnemy> fastEnemies = new ArrayList<>();
-    ArrayList<strongEnemy> strongEnemies = new ArrayList<>();
+    ArrayList<FastEnemy> fastEnemies = new ArrayList<>();
+    ArrayList<StrongEnemy> strongEnemies = new ArrayList<>();
     ArrayList<Boss> bosses = new ArrayList<>();
     ArrayList<Tower> towers = new ArrayList<>();
     ArrayList<Projektiel> projektiele = new ArrayList<>();
@@ -132,7 +134,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         budget -= kostenSchnell;
                         gegnerAufBildschirm += 1;
 
-                        fastEnemy fastenemy = new fastEnemy();
+                        FastEnemy fastenemy = new FastEnemy();
 
                         fastEnemies.add(fastenemy);
                     }
@@ -146,7 +148,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         budget -= kostenStark;
                         gegnerAufBildschirm += 1;
 
-                        strongEnemy strongEnemy = new strongEnemy();
+                        StrongEnemy strongEnemy = new StrongEnemy();
 
                         strongEnemies.add(strongEnemy);
                     }
@@ -176,7 +178,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 }
 
                 // Schnelle Gegner
-                for (fastEnemy fastEnemy : fastEnemies) {
+                for (FastEnemy fastEnemy : fastEnemies) {
                     int enemyX = fastEnemy.getX();
                     int enemyY = WEG_Y + 35;
 
@@ -186,7 +188,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 }
 
                 // Starke Gegner
-                for (strongEnemy strongEnemy : strongEnemies) {
+                for (StrongEnemy strongEnemy : strongEnemies) {
                     int enemyX = strongEnemy.getX();
                     int enemyY = WEG_Y + 35;
 
@@ -254,7 +256,7 @@ public class GamePanel extends JPanel implements MouseListener {
             // Schnelle Gegner bewegen
             for (int i = fastEnemies.size() - 1; i >= 0; i--){
 
-                fastEnemy fastEnemy = fastEnemies.get(i);
+                FastEnemy fastEnemy = fastEnemies.get(i);
                 fastEnemy.bewegen();
 
                 if (fastEnemy.getX() > SPIEL_BREITE){
@@ -273,7 +275,7 @@ public class GamePanel extends JPanel implements MouseListener {
             // Starke Gegner bewegen
             for (int i = strongEnemies.size() - 1; i >= 0; i--){
 
-                strongEnemy strongEnemy = strongEnemies.get(i);
+                StrongEnemy strongEnemy = strongEnemies.get(i);
                 strongEnemy.bewegen();
 
 
@@ -366,7 +368,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 // Schneller Gegner
                 for (int i = fastEnemies.size() - 1; i >= 0; i--){
 
-                    fastEnemy fastEnemy = fastEnemies.get(i);
+                    FastEnemy fastEnemy = fastEnemies.get(i);
 
                     int enemyX = fastEnemy.getX();
                     int enemyY = WEG_Y + 35;
@@ -401,7 +403,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 // Starker Gegner
                 for (int i = strongEnemies.size() - 1; i >= 0; i--){
 
-                    strongEnemy strongEnemy = strongEnemies.get(i);
+                    StrongEnemy strongEnemy = strongEnemies.get(i);
 
                     int enemyX = strongEnemy.getX();
                     int enemyY = WEG_Y + 35;
@@ -545,13 +547,13 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
-        for (fastEnemy fastEnemy : fastEnemies){
+        for (FastEnemy fastEnemy : fastEnemies){
 
             fastEnemy.fastEnemySpawn(g2, wegY);
         }
 
 
-        for (strongEnemy strongEnemy : strongEnemies){
+        for (StrongEnemy strongEnemy : strongEnemies){
 
             strongEnemy.strongEnenmySpawn(g2, wegY);
         }

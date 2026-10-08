@@ -1,5 +1,8 @@
 package ch.alexb.tower;
 
+import ch.alexb.tower.ui.panles.GamePanel;
+import ch.alexb.tower.ui.panles.UpgradePanel;
+
 import javax.swing.*;
 import java.awt.*;
 

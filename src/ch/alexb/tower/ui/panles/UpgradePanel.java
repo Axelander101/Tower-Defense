@@ -1,5 +1,7 @@
 package ch.alexb.tower.ui.panles;
 
+import ch.alexb.tower.ui.Tower;
+
 import javax.swing.*;
 import java.awt.*;
 
