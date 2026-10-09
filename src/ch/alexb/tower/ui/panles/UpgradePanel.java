@@ -83,7 +83,7 @@ public class UpgradePanel extends JPanel {
         g2.drawRect(725, 600, 160, 60);
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
         rueckerstattung = tower.getRueckerstattung();
-        g2.drawString("Sell" + rueckerstattung, 740, 635);
+        g2.drawString("Sell " + rueckerstattung, 740, 635);
 
 
     }

@@ -739,7 +739,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Einstellungen im Spiel öffnen
-        if (mousex > 930 && mousex < 980 && mousey < 70 && mousey > 10){
+        if (mousex > 930 && mousex < 980 && mousey < 70 && mousey > 10 && !upgradeMenueOffen){
             if (!einstellungenOffen) {
                 einstellungenOffen = true;
             }
@@ -869,15 +869,17 @@ public class GamePanel extends JPanel implements MouseListener {
         // Vorhandenen Tower anklicken
         for (Tower tower : towers){
 
-            if (tower.aufTowerGeklickt(mousex, mousey)){
+            if (!einstellungenOffen){
+                if (tower.aufTowerGeklickt(mousex, mousey)) {
 
-                ausgewaehlterTower = tower;
+                    ausgewaehlterTower = tower;
 
-                upgradeMenueOffen = true;
+                    upgradeMenueOffen = true;
 
-                repaint();
+                    repaint();
 
-                return;
+                    return;
+                }
             }
         }
 
