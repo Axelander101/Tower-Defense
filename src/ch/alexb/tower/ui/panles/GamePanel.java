@@ -28,18 +28,23 @@ public class GamePanel extends JPanel implements MouseListener {
     Tower ausgewaehlterTower;
 
     boolean upgradeMenueOffen = false;
+    boolean einstellungenOffen = false;
 
-    int leben = 1;
+    int leben = 20;
     int geld = 10000;
 
-    boolean gameOver = true;
+    boolean gameOver = false;
     boolean spielMunueOffen = false;
+
+    boolean doppelgeschwindigkeit = false;
 
     private static final int WEG_Y = 330;
     private static final int SPIEL_BREITE = 1000;
     private static final int SPIEL_HOEHE = 700;
 
     int welle = 0;
+    int gegnerGetoetet = 0;
+    int totalGeld = 100;
 
     int kostenNormal = 2;
     int kostenSchnell = 3;
@@ -55,6 +60,14 @@ public class GamePanel extends JPanel implements MouseListener {
 
     int weitesterGegneraufStrecke = 0;
 
+    int spielgeschwindigkeit = 1;
+
+    int spawnDelay = 1000;
+    int minSpawnDelay = 100;
+
+    int shootDelay = 500;
+
+    int mainDelay = 16;
 
 
 
@@ -74,9 +87,9 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Gegner spawnen
-        spawnTimer = new Timer(1000, e -> {
+        spawnTimer = new Timer(spawnDelay, e -> {
 
-            int delay = random.nextInt(100, 1000);
+            int delay = random.nextInt(minSpawnDelay, spawnDelay);
 
             spawnTimer.setDelay(delay);
 
@@ -112,9 +125,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             switch (zahl){
-
                 case 1 -> {
-
                     if (budget >= kostenNormal){
 
                         budget -= kostenNormal;
@@ -128,7 +139,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
                 case 2 -> {
-
                     if (budget >= kostenSchnell){
 
                         budget -= kostenSchnell;
@@ -157,8 +167,10 @@ public class GamePanel extends JPanel implements MouseListener {
         });
 
 
-        // ch.alexb.tower.ui.Tower schießen
-        schiessenTimer = new Timer(500, e -> {
+        // Tower schießen
+        schiessenTimer = new Timer(shootDelay, e -> {
+
+            schiessenTimer.setDelay(shootDelay);
 
             for (Tower tower : towers){
                 int towerX = tower.getMousex();
@@ -177,6 +189,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                 }
 
+
                 // Schnelle Gegner
                 for (FastEnemy fastEnemy : fastEnemies) {
                     int enemyX = fastEnemy.getX();
@@ -186,6 +199,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         weitesterGegneraufStrecke = enemyX;
                     }
                 }
+
 
                 // Starke Gegner
                 for (StrongEnemy strongEnemy : strongEnemies) {
@@ -230,8 +244,9 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Hauptspiel
-        gameTimer = new Timer(16, e -> {
+        gameTimer = new Timer(mainDelay, e -> {
 
+            gameTimer.setDelay(mainDelay);
 
             // Normale Gegner bewegen
             for (int i = enemies.size() - 1; i >= 0; i--){
@@ -348,6 +363,9 @@ public class GamePanel extends JPanel implements MouseListener {
                                 enemies.remove(i);
                                 geld += 5;
                                 gegnerAufBildschirm -= 1;
+
+                                gegnerGetoetet += 1;
+                                totalGeld += 5;
                             }
 
 
@@ -385,6 +403,9 @@ public class GamePanel extends JPanel implements MouseListener {
                                 fastEnemies.remove(i);
                                 geld += 7;
                                 gegnerAufBildschirm -= 1;
+
+                                gegnerGetoetet += 1;
+                                totalGeld += 7;
                             }
 
                             projektiel.getroffen();
@@ -418,6 +439,9 @@ public class GamePanel extends JPanel implements MouseListener {
                                 strongEnemies.remove(i);
                                 geld += 10;
                                 gegnerAufBildschirm -= 1;
+
+                                gegnerGetoetet += 1;
+                                totalGeld += 10;
                             }
 
                             projektiel.getroffen();
@@ -452,6 +476,9 @@ public class GamePanel extends JPanel implements MouseListener {
                                 bosses.remove(i);
                                 geld += 100;
                                 gegnerAufBildschirm -= 1;
+
+                                gegnerGetoetet += 1;
+                                totalGeld += 100;
                             }
 
                             projektiel.getroffen();
@@ -540,6 +567,8 @@ public class GamePanel extends JPanel implements MouseListener {
         g2.drawString(welle + " Welle", 0, 60);
 
 
+
+
         // Gegner zeichnen
         for (Enemy enemy : enemies){
 
@@ -576,6 +605,41 @@ public class GamePanel extends JPanel implements MouseListener {
         for (Projektiel projektiel : projektiele){
 
             projektiel.projektielZeichnen(g2);
+        }
+
+
+        // Doppelgeschwindigkeit
+        g2.setColor(Color.BLACK);
+        g2.drawRect(930, 630, 60, 60);
+        int [] x1 = {935, 935, 960};
+        int [] y1 = {640, 680, 660};
+
+        int [] x2 = {955, 955, 980};
+        int [] y2 = {640, 680, 660};
+
+        g2.fillPolygon(x1, y1, 3);
+        if (doppelgeschwindigkeit){
+            g2.fillPolygon(x2, y2, 3);
+        }
+
+
+        // Einstellungen im spiel
+        g2.drawRect(930, 10, 60, 60);
+        g2.setFont(new Font("Arial", Font.PLAIN, 80));
+        g2.drawString("⚙️", 935, 62);
+
+        if (einstellungenOffen){
+            g2.setColor(Color.ORANGE);
+            g2.fillRect(200, 200, 600, 300);
+            g2.setColor(Color.RED);
+            g2.setFont(new Font("Arial", Font.PLAIN, 45));
+            g2.drawRect(740, 210, 50, 50);
+            g2.drawString("X", 750, 250);
+
+            g2.setColor(Color.BLACK);
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2.drawString("Total money: " + totalGeld, 230, 250);
+            g2.drawString("Total Pops: " + gegnerGetoetet, 230, 280);
         }
 
 
@@ -650,6 +714,58 @@ public class GamePanel extends JPanel implements MouseListener {
             }
         }
 
+        //Spielgeschwindigkeit erhöhen
+        if (mousex > 930 && mousex < 980 && mousey > 630 && mousey < 680){
+
+            if (spielgeschwindigkeit == 1){
+                spielgeschwindigkeit = 2;
+                doppelgeschwindigkeit = true;
+
+
+            }else if(spielgeschwindigkeit == 2){
+                spielgeschwindigkeit = 1;
+                doppelgeschwindigkeit = false;
+            }
+
+            spawnDelay = 1000 / spielgeschwindigkeit;
+            minSpawnDelay = 100 / spielgeschwindigkeit;
+
+            shootDelay = 500 / spielgeschwindigkeit;
+
+            mainDelay = 16 / spielgeschwindigkeit;
+
+
+        }
+
+
+        // Einstellungen im Spiel öffnen
+        if (mousex > 930 && mousex < 980 && mousey < 70 && mousey > 10){
+            if (!einstellungenOffen) {
+                einstellungenOffen = true;
+            }
+        }
+
+        // Einstellungsmenue ist offen
+        if (einstellungenOffen){
+
+            gameTimer.stop();
+            spawnTimer.stop();
+            schiessenTimer.stop();
+
+            if (mousex > 740 && mousex < 790 && mousey > 210 && mousey < 260){
+                einstellungenOffen = false;
+
+                gameTimer.start();
+                spawnTimer.start();
+                schiessenTimer.start();
+
+                return;
+
+            }
+            repaint();
+            return;
+        }
+
 
         // Upgrade Menue ist offen
         if (upgradeMenueOffen && ausgewaehlterTower != null){
@@ -668,7 +784,7 @@ public class GamePanel extends JPanel implements MouseListener {
             }
 
 
-            // ch.alexb.tower.ui.Tower verkaufen
+            // Tower verkaufen
             if (mousex >= 725 && mousex <= 885 && mousey >= 600 && mousey <= 660){
                 upgradeMenueOffen = false;
 
@@ -745,12 +861,12 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             // Solange das Menue offen ist,
-            // kann kein ch.alexb.tower.ui.Tower dahinter gesetzt werden
+            // kann kein Tower dahinter gesetzt werden
             return;
         }
 
 
-        // Vorhandenen ch.alexb.tower.ui.Tower anklicken
+        // Vorhandenen Tower anklicken
         for (Tower tower : towers){
 
             if (tower.aufTowerGeklickt(mousex, mousey)){
@@ -766,27 +882,31 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
-        // Neuen ch.alexb.tower.ui.Tower platzieren
+        // Neuen Tower platzieren
         if (geld >= 50){
 
-            if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100){
+            if (!einstellungenOffen){
+                if (mousex < 930 || mousex > 1000 && mousey < 630 || mousey > 700){
+                    if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
 
-                Tower tower = new Tower();
+                        Tower tower = new Tower();
 
 
-                if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty)){
+                        if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                    tower.newTower(mousex, mousey);
+                            tower.newTower(mousex, mousey);
 
-                    geld -= 50;
+                            geld -= 50;
 
-                    plaziertx.add(mousex);
+                            plaziertx.add(mousex);
 
-                    plazierty.add(mousey);
+                            plazierty.add(mousey);
 
-                    towers.add(tower);
+                            towers.add(tower);
 
-                    repaint();
+                            repaint();
+                        }
+                    }
                 }
             }
         }

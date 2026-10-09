@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        JFrame frame = new JFrame("ch.alexb.tower.ui.Tower Defense");
+        JFrame frame = new JFrame("Tower Defense");
 
         CardLayout cardLayout = new CardLayout();
         JPanel container = new JPanel(cardLayout);

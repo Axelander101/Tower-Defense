@@ -27,7 +27,7 @@ public class Tower {
 
         g2.fillOval(mousex - 30, mousey - 30, 60, 60);
 
-        g2.drawOval(mousex - reichweite /2, mousey - reichweite / 2, reichweite, reichweite);
+        //g2.drawOval(mousex - reichweite /2, mousey - reichweite / 2, reichweite, reichweite);
 
 
     }
