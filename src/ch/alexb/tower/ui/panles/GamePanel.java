@@ -1,9 +1,9 @@
 package ch.alexb.tower.ui.panles;
 
+import ch.alexb.tower.sounds.Sound;
 import ch.alexb.tower.ui.*;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -29,6 +29,9 @@ public class GamePanel extends JPanel implements MouseListener {
 
     boolean upgradeMenueOffen = false;
     boolean einstellungenOffen = false;
+
+    JSlider shootLautstaerkeSlider = new JSlider(0, 100, 50);
+    JSlider popLautstaerkeSlider = new JSlider(0, 100, 50);
 
     int leben = 20;
     int geld = 10000;
@@ -64,10 +67,12 @@ public class GamePanel extends JPanel implements MouseListener {
 
     int spawnDelay = 1000;
     int minSpawnDelay = 100;
-
     int shootDelay = 500;
-
     int mainDelay = 16;
+
+
+    float shootLautstaerke = -15.0f;
+    float popLautstaerke = -15.0f;
 
 
 
@@ -80,6 +85,39 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
     public GamePanel() {
+
+
+        setLayout(null);
+        shootLautstaerkeSlider.setVisible(false);
+
+        shootLautstaerkeSlider.setBounds(500, 220, 200, 50);
+
+        add(shootLautstaerkeSlider);
+
+        shootLautstaerkeSlider.addChangeListener(e -> {
+
+             int wert = shootLautstaerkeSlider.getValue();
+
+             shootLautstaerke = -40.0f + wert * 0.4f;
+
+        });
+
+        setLayout(null);
+        popLautstaerkeSlider.setVisible(false);
+
+        popLautstaerkeSlider.setBounds(500, 290, 200, 50);
+
+        add(popLautstaerkeSlider);
+
+        popLautstaerkeSlider.addChangeListener(e -> {
+
+            int wert = popLautstaerkeSlider.getValue();
+
+            popLautstaerke = -40.0f + wert * 0.4f;
+
+        });
+
+
 
         setBackground(Color.GREEN);
 
@@ -234,6 +272,8 @@ public class GamePanel extends JPanel implements MouseListener {
                     Projektiel projektiel = new Projektiel(towerX, towerY, weitesterGegneraufStrecke, enemyY, 1.5, reichweite, tower);
                     projektiele.add(projektiel);
 
+                    Sound.abspielen("sounds/shoot.wav", shootLautstaerke);
+
                 }
 
 
@@ -358,6 +398,8 @@ public class GamePanel extends JPanel implements MouseListener {
 
                             enemy.schadenNehmen(1);
 
+                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
+
                             if (enemy.getLeben() <= 0) {
 
                                 enemies.remove(i);
@@ -398,6 +440,8 @@ public class GamePanel extends JPanel implements MouseListener {
 
                             fastEnemy.schadenNehmen(1);
 
+                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
+
                             if (fastEnemy.getLeben() <= 0) {
 
                                 fastEnemies.remove(i);
@@ -432,7 +476,10 @@ public class GamePanel extends JPanel implements MouseListener {
                     if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
 
                         if (!projektiel.hatGegnerScchonGetroffen(strongEnemy)) {
+
                             strongEnemy.schadenNehmen(1);
+
+                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
                             if (strongEnemy.getLeben() <= 0) {
 
@@ -470,7 +517,10 @@ public class GamePanel extends JPanel implements MouseListener {
                     if (projektilX > enemyX - 15 && projektilX < enemyX + 35 && projektilY > enemyY - 15 && projektilY < enemyY + 35){
 
                         if (!projektiel.hatGegnerScchonGetroffen(boss)) {
+
                             boss.schadenNehmen(1);
+
+                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
                             if (boss.getLeben() <= 0) {
                                 bosses.remove(i);
@@ -640,8 +690,25 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.drawString("Total money: " + totalGeld, 230, 250);
             g2.drawString("Total Pops: " + gegnerGetoetet, 230, 280);
+
+
+            g2.drawString("Shoot volume" , 500, 240);
+            g2.drawString("Pop Value", 500, 310);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            g2.drawString("0%", 490, 258);
+            g2.drawString("100%", 690, 258);
+            shootLautstaerkeSlider.setVisible(true);
+
+            g2.drawString("0%", 490, 328);
+            g2.drawString("100%", 690, 328);
+            popLautstaerkeSlider.setVisible(true);
         }
 
+        if (!einstellungenOffen){
+            shootLautstaerkeSlider.setVisible(false);
+            popLautstaerkeSlider.setVisible(false);
+        }
 
         // Upgrade Menue
         if (upgradeMenueOffen && ausgewaehlterTower != null){
@@ -701,10 +768,11 @@ public class GamePanel extends JPanel implements MouseListener {
                 // stats reseten
                 leben = 20;
                 geld = 100;
-                welle = 0;
+                welle = 1;
                 gegnerAufBildschirm = 0;
 
                 // Game Loop starten
+                towers.clear();
                 spawnTimer.start();
                 gameTimer.start();
                 schiessenTimer.start();

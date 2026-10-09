@@ -1,5 +1,7 @@
 package ch.alexb.tower.ui;
 
+import ch.alexb.tower.sounds.Sound;
+
 import java.awt.*;
 import java.util.ArrayList;
 
