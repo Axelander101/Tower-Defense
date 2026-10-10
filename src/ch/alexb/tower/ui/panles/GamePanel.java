@@ -24,7 +24,10 @@ public class GamePanel extends JPanel implements MouseListener {
     ArrayList<Integer> plazierty = new ArrayList<>();
 
     UpgradePanel upgradePanel = new UpgradePanel();
-    MenuePanel menuePanel= new MenuePanel();
+    InGameMenuePanel inGameMenuePanel = new InGameMenuePanel();
+
+    private CardLayout cardLayout;
+    private JPanel hauptPanel;
 
     Tower ausgewaehlterTower;
     Bank ausgewaehlteBank;
@@ -54,6 +57,7 @@ public class GamePanel extends JPanel implements MouseListener {
     int welle = 0;
     int gegnerGetoetet = 0;
     int totalGeld = 100;
+    int map;
 
     int kostenNormal = 2;
     int kostenSchnell = 3;
@@ -106,9 +110,22 @@ public class GamePanel extends JPanel implements MouseListener {
         }
     }
 
+    public void gameStarten(int ausgewaehlteMap){
 
-    public GamePanel() {
+        map = ausgewaehlteMap;
 
+        spawnTimer.start();
+        schiessenTimer.start();
+        gameTimer.start();
+    }
+
+
+    public GamePanel(CardLayout cardLayout, JPanel hauptPanel) {
+
+        this.cardLayout = cardLayout;
+        this.hauptPanel = hauptPanel;
+
+        addMouseListener(this);
 
         setLayout(null);
         shootLautstaerkeSlider.setVisible(false);
@@ -612,9 +629,6 @@ public class GamePanel extends JPanel implements MouseListener {
         });
 
 
-        spawnTimer.start();
-        gameTimer.start();
-        schiessenTimer.start();
     }
 
 
@@ -757,6 +771,10 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.drawString("Total Pops: " + gegnerGetoetet, 230, 280);
 
 
+            g2.drawRect(410, 450, 180, 30);
+            g2.drawString("Spiel Verlassen", 430, 472);
+
+
             g2.drawString("Shoot volume" , 500, 240);
             g2.drawString("Pop Value", 500, 310);
 
@@ -872,7 +890,7 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
         if (spielMunueOffen){
-            menuePanel.menueGameOver(g2);
+            inGameMenuePanel.menueGameOver(g2);
         }
 
 
@@ -990,6 +1008,12 @@ public class GamePanel extends JPanel implements MouseListener {
                 schiessenTimer.start();
 
                 return;
+
+            }
+
+            if (mousex > 410 && mousex < 590 && mousey > 450 && mousey < 480){
+
+                cardLayout.show(hauptPanel ,"menu");
 
             }
             repaint();

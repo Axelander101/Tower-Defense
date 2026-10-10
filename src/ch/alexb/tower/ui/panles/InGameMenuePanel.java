@@ -2,7 +2,7 @@ package ch.alexb.tower.ui.panles;
 
 import java.awt.*;
 
-public class MenuePanel {
+public class InGameMenuePanel {
 
     public void menueGameOver(Graphics g2){
 
