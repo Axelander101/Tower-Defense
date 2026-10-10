@@ -253,6 +253,10 @@ public class Tower {
 
     }
 
+    public int getDemage(){
+        return demage;
+    }
+
     public int getTowerTyp(){
         return TowerTyp;
     }

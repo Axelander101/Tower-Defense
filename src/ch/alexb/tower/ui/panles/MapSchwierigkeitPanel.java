@@ -3,15 +3,21 @@ package ch.alexb.tower.ui.panles;
 import javax.swing.*;
 import java.awt.*;
 
-public class MapSelectPanel extends JPanel {
+public class MapSchwierigkeitPanel extends JPanel {
 
     private CardLayout cardLayout;
 
     private JPanel hauptPanel;
 
+    private int map;
 
 
-    public MapSelectPanel(CardLayout cardLayout, JPanel hauptPanel, GamePanel gamePanel){
+    public void mapBestimmen (int ausgewaehltemap){
+
+        map = ausgewaehltemap;
+    }
+
+    public MapSchwierigkeitPanel(CardLayout cardLayout, JPanel hauptPanel, GamePanel gamePanel){
 
         this.cardLayout = cardLayout;
 
@@ -32,7 +38,7 @@ public class MapSelectPanel extends JPanel {
 
             cardLayout.show(hauptPanel, "game");
 
-            gamePanel.gameStarten(1);
+            gamePanel.gameStarten(map);
 
         });
 

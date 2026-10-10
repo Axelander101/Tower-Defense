@@ -1,9 +1,8 @@
 package ch.alexb.tower;
 
 import ch.alexb.tower.ui.panles.GamePanel;
-import ch.alexb.tower.ui.panles.MainMenuPanel;
-import ch.alexb.tower.ui.panles.MapSelectPanel;
-import ch.alexb.tower.ui.panles.UpgradePanel;
+import ch.alexb.tower.ui.panles.MapAuswaehlPanel;
+import ch.alexb.tower.ui.panles.MapSchwierigkeitPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,16 +19,16 @@ public class Main {
 
         GamePanel gamePanel = new GamePanel(cardLayout, hauptPanel);
 
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(cardLayout, hauptPanel);
+        MapSchwierigkeitPanel mapSchwierigkeitPanel = new MapSchwierigkeitPanel(cardLayout, hauptPanel, gamePanel);
 
-        MapSelectPanel mapSelectPanel = new MapSelectPanel(cardLayout, hauptPanel, gamePanel);
+        MapAuswaehlPanel mapAuswaehlPanel = new MapAuswaehlPanel(cardLayout, hauptPanel, mapSchwierigkeitPanel);
 
 
 
-        hauptPanel.add(mainMenuPanel, "menu");
+        hauptPanel.add(mapAuswaehlPanel, "menu");
         hauptPanel.add(gamePanel, "game");
 
-        hauptPanel.add(mapSelectPanel, "maps");
+        hauptPanel.add(mapSchwierigkeitPanel, "maps");
 
 
 

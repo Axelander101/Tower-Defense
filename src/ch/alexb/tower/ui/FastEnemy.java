@@ -1,25 +1,59 @@
 package ch.alexb.tower.ui;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class FastEnemy {
     private int x;
     private int y;
     private int leben = 3;
     private int geschwindigkeit = 3;
+    private int aktuellerWegPunkt = 0;
 
 
-    public void fastEnemySpawn(Graphics g, int curenty){
-        y = curenty;
+    public void fastEnemySpawn(Graphics g){
+
         g.setColor(Color.PINK);
-        g.fillOval(x,y + 35, 30, 30 );
+        g.fillOval((int) x,(int) y - 15, 30, 30 );
     }
 
 
 
-    public void bewegen(){
-        x += geschwindigkeit;
+    public FastEnemy(ArrayList<Point> wegPunkte){
 
+        x = wegPunkte.get(0).x;
+        y = wegPunkte.get(0).y;
+
+        aktuellerWegPunkt = 1;
+    }
+
+    public void bewegen(ArrayList<Point> wegPunkte){
+
+        if (aktuellerWegPunkt >= wegPunkte.size()){
+            return;
+        }
+
+        Point ziel = wegPunkte.get(aktuellerWegPunkt);
+
+        double dx = ziel.x - x;
+        double dy = ziel.y - y;
+
+        double entfernung = Math.sqrt(dx * dx + dy * dy);
+
+
+        if (entfernung <= geschwindigkeit){
+
+            x = ziel.x;
+            y = ziel.y;
+
+            aktuellerWegPunkt++;
+
+            return;
+        }
+
+
+        x = (int) (x + dx / entfernung * geschwindigkeit);
+        y = (int) (y + dy / entfernung * geschwindigkeit);
     }
 
     public void setLeben(int welle){

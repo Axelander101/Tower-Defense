@@ -12,6 +12,8 @@ import java.util.Random;
 
 public class GamePanel extends JPanel implements MouseListener {
 
+    ArrayList<Point> wegPunkte = new ArrayList<>();
+
     ArrayList<Enemy> enemies = new ArrayList<>();
     ArrayList<FastEnemy> fastEnemies = new ArrayList<>();
     ArrayList<StrongEnemy> strongEnemies = new ArrayList<>();
@@ -50,7 +52,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
     boolean bankSchonGezahlt = false;
 
-    private static final int WEG_Y = 330;
+    private static final int WEG_Y = 300;
     private static final int SPIEL_BREITE = 1000;
     private static final int SPIEL_HOEHE = 700;
 
@@ -114,18 +116,32 @@ public class GamePanel extends JPanel implements MouseListener {
 
         map = ausgewaehlteMap;
 
+        wegPunkte.clear();
+
+        if (map == 1){
+            wegPunkte.add(new Point(0, 350));
+            wegPunkte.add(new Point(1000, 350));
+        }
+
+        if (map == 2){
+            wegPunkte.add(new Point(0, 350));
+            wegPunkte.add(new Point(250, 350));
+            wegPunkte.add(new Point(250, 500));
+            wegPunkte.add(new Point(600, 500));
+            wegPunkte.add(new Point(600, 200));
+            wegPunkte.add(new Point(1000, 200));
+        }
+
         spawnTimer.start();
         schiessenTimer.start();
         gameTimer.start();
     }
-
 
     public GamePanel(CardLayout cardLayout, JPanel hauptPanel) {
 
         this.cardLayout = cardLayout;
         this.hauptPanel = hauptPanel;
 
-        addMouseListener(this);
 
         setLayout(null);
         shootLautstaerkeSlider.setVisible(false);
@@ -167,8 +183,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
 
-        setBackground(Color.GREEN);
-
         addMouseListener(this);
 
 
@@ -207,7 +221,7 @@ public class GamePanel extends JPanel implements MouseListener {
             // Boss jede 10. Welle
             if (welle % 10 == 0 && budget > 0 && welle != 10){
 
-                Boss boss = new Boss();
+                Boss boss = new Boss(wegPunkte);
 
                 boss.leben(welle * 2);
 
@@ -225,7 +239,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         budget -= kostenNormal;
                         gegnerAufBildschirm += 1;
 
-                        Enemy enemy = new Enemy();
+                        Enemy enemy = new Enemy(wegPunkte);
                         enemy.setLeben(welle);
 
                         enemies.add(enemy);
@@ -239,7 +253,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         budget -= kostenSchnell;
                         gegnerAufBildschirm += 1;
 
-                        FastEnemy fastenemy = new FastEnemy();
+                        FastEnemy fastenemy = new FastEnemy(wegPunkte);
 
                         fastenemy.setLeben(welle);
                         fastEnemies.add(fastenemy);
@@ -254,7 +268,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         budget -= kostenStark;
                         gegnerAufBildschirm += 1;
 
-                        StrongEnemy strongEnemy = new StrongEnemy();
+                        StrongEnemy strongEnemy = new StrongEnemy(wegPunkte);
 
                         strongEnemy.setLeben(welle);
                         strongEnemies.add(strongEnemy);
@@ -353,10 +367,10 @@ public class GamePanel extends JPanel implements MouseListener {
             for (int i = enemies.size() - 1; i >= 0; i--){
 
                 Enemy enemy = enemies.get(i);
-                enemy.bewegen();
+                enemy.bewegen(wegPunkte);
 
 
-                if (enemy.getX() > SPIEL_BREITE){
+                if (enemy.getX() >= SPIEL_BREITE){
 
                     leben -= 1;
                     gegnerAufBildschirm -= 1;
@@ -373,9 +387,9 @@ public class GamePanel extends JPanel implements MouseListener {
             for (int i = fastEnemies.size() - 1; i >= 0; i--){
 
                 FastEnemy fastEnemy = fastEnemies.get(i);
-                fastEnemy.bewegen();
+                fastEnemy.bewegen(wegPunkte);
 
-                if (fastEnemy.getX() > SPIEL_BREITE){
+                if (fastEnemy.getX() >= SPIEL_BREITE){
 
                     leben -= 1;
                     gegnerAufBildschirm -= 1;
@@ -392,10 +406,10 @@ public class GamePanel extends JPanel implements MouseListener {
             for (int i = strongEnemies.size() - 1; i >= 0; i--){
 
                 StrongEnemy strongEnemy = strongEnemies.get(i);
-                strongEnemy.bewegen();
+                strongEnemy.bewegen(wegPunkte);
 
 
-                if (strongEnemy.getX() > SPIEL_BREITE){
+                if (strongEnemy.getX() >= SPIEL_BREITE){
 
                     leben -= 2;
                     gegnerAufBildschirm -= 1;
@@ -412,9 +426,9 @@ public class GamePanel extends JPanel implements MouseListener {
             for (int i = bosses.size() - 1; i >= 0; i--){
 
                 Boss boss = bosses.get(i);
-                boss.bewegen();
+                boss.bewegen(wegPunkte);
 
-                if (boss.getX() > SPIEL_BREITE){
+                if (boss.getX() >= SPIEL_BREITE){
 
                     leben -= 10;
                     gegnerAufBildschirm -= 1;
@@ -457,7 +471,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         if (!projektiel.hatGegnerScchonGetroffen(enemy)) {
 
-                            enemy.schadenNehmen(1);
+                            enemy.schadenNehmen(projektiel.getTower().getDemage());
 
                             Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -499,7 +513,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         if (!projektiel.hatGegnerScchonGetroffen(fastEnemy)) {
 
-                            fastEnemy.schadenNehmen(1);
+                            fastEnemy.schadenNehmen(projektiel.getTower().getDemage());
 
                             Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -538,7 +552,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         if (!projektiel.hatGegnerScchonGetroffen(strongEnemy)) {
 
-                            strongEnemy.schadenNehmen(1);
+                            strongEnemy.schadenNehmen(projektiel.getTower().getDemage());
 
                             Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -579,7 +593,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         if (!projektiel.hatGegnerScchonGetroffen(boss)) {
 
-                            boss.schadenNehmen(1);
+                            boss.schadenNehmen(projektiel.getTower().getDemage());
 
                             Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -634,6 +648,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
     public void gameOver(){
         leben = 0;
+        geld = 100;
         gameOver = true;
         spawnTimer.stop();
         gameTimer.stop();
@@ -657,7 +672,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
         super.paintComponent(g);
 
-
         double scaleX = getWidth() / (double) SPIEL_BREITE;
 
         double scaleY = getHeight() / (double) SPIEL_HOEHE;
@@ -673,9 +687,26 @@ public class GamePanel extends JPanel implements MouseListener {
         int wegHoehe = 100;
 
 
-        // Weg
+        // Map zeichnen
+        if (map == 1){
+            setBackground(Color.GREEN);
+        }else if(map == 2){
+            setBackground(Color.YELLOW);
+        }
+
         g2.setColor(Color.GRAY);
-        g2.fillRect(0, wegY, SPIEL_BREITE, wegHoehe);
+
+        g2.setStroke(new BasicStroke(100, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+
+        for (int i = 0; i < wegPunkte.size() - 1; i++) {
+
+            Point punkt1 = wegPunkte.get(i);
+            Point punkt2 = wegPunkte.get(i + 1);
+
+            g2.drawLine(punkt1.x, punkt1.y, punkt2.x, punkt2.y);
+        }
+
+        g2.setStroke(new BasicStroke(1));
 
 
         // Anzeige
@@ -690,48 +721,46 @@ public class GamePanel extends JPanel implements MouseListener {
         g2.drawString(welle + " Welle", 0, 60);
 
 
-
-
         // Gegner zeichnen
-        for (Enemy enemy : enemies){
+        for (Enemy enemy : enemies) {
 
-            enemy.normalEnemySpawn(g2, wegY);
+            enemy.normalEnemySpawn(g2);
         }
 
 
-        for (FastEnemy fastEnemy : fastEnemies){
+        for (FastEnemy fastEnemy : fastEnemies) {
 
-            fastEnemy.fastEnemySpawn(g2, wegY);
+            fastEnemy.fastEnemySpawn(g2);
         }
 
 
-        for (StrongEnemy strongEnemy : strongEnemies){
+        for (StrongEnemy strongEnemy : strongEnemies) {
 
-            strongEnemy.strongEnenmySpawn(g2, wegY);
+            strongEnemy.strongEnenmySpawn(g2);
         }
 
 
-        for (Boss boss : bosses){
+        for (Boss boss : bosses) {
 
-            boss.bossSpawn(g2, wegY - 10);
+            boss.bossSpawn(g2);
         }
 
 
         // Tower zeichnen
-        for (Tower tower : towers){
+        for (Tower tower : towers) {
 
             tower.towerzeichnen(g2);
         }
 
 
         // Banken zeichnen
-        for (Bank bank: banks){
+        for (Bank bank : banks) {
             bank.bankZeichnen(g2);
         }
 
 
         // Projektile zeichnen
-        for (Projektiel projektiel : projektiele){
+        for (Projektiel projektiel : projektiele) {
 
             projektiel.projektielZeichnen(g2);
         }
@@ -740,14 +769,14 @@ public class GamePanel extends JPanel implements MouseListener {
         // Doppelgeschwindigkeit
         g2.setColor(Color.BLACK);
         g2.drawRect(930, 630, 60, 60);
-        int [] x1 = {935, 935, 960};
-        int [] y1 = {640, 680, 660};
+        int[] x1 = {935, 935, 960};
+        int[] y1 = {640, 680, 660};
 
-        int [] x2 = {955, 955, 980};
-        int [] y2 = {640, 680, 660};
+        int[] x2 = {955, 955, 980};
+        int[] y2 = {640, 680, 660};
 
         g2.fillPolygon(x1, y1, 3);
-        if (doppelgeschwindigkeit){
+        if (doppelgeschwindigkeit) {
             g2.fillPolygon(x2, y2, 3);
         }
 
@@ -755,9 +784,11 @@ public class GamePanel extends JPanel implements MouseListener {
         // Einstellungen im spiel
         g2.drawRect(930, 10, 60, 60);
         g2.setFont(new Font("Arial", Font.PLAIN, 80));
+        g2.setColor(Color.GRAY);
         g2.drawString("⚙️", 935, 62);
+        g2.setColor(Color.BLACK);
 
-        if (einstellungenOffen){
+        if (einstellungenOffen) {
             g2.setColor(Color.ORANGE);
             g2.fillRect(200, 200, 600, 300);
             g2.setColor(Color.RED);
@@ -774,8 +805,7 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.drawRect(410, 450, 180, 30);
             g2.drawString("Spiel Verlassen", 430, 472);
 
-
-            g2.drawString("Shoot volume" , 500, 240);
+            g2.drawString("Shoot volume", 500, 240);
             g2.drawString("Pop Value", 500, 310);
 
             g2.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -788,19 +818,19 @@ public class GamePanel extends JPanel implements MouseListener {
             popLautstaerkeSlider.setVisible(true);
         }
 
-        if (!einstellungenOffen){
+        if (!einstellungenOffen) {
             shootLautstaerkeSlider.setVisible(false);
             popLautstaerkeSlider.setVisible(false);
         }
 
         // Tower Upgrade Menue
-        if (upgradeMenueOffen && ausgewaehlterTower != null){
+        if (upgradeMenueOffen && ausgewaehlterTower != null) {
 
             upgradePanel.towerUpgrademenue(g2, ausgewaehlterTower);
         }
 
         // Bank Upgrade Menue
-        if (upgradeMenueOffen && ausgewaehlteBank != null){
+        if (upgradeMenueOffen && ausgewaehlteBank != null) {
 
             upgradePanel.bankUpgradeMenue(g2, ausgewaehlteBank);
         }
@@ -812,7 +842,7 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.setColor(Color.BLACK);
             g2.drawRect(10, 640, 50, 50);
             g2.drawString("➡", 15, 682);
-        }else {
+        } else {
             g2.setFont(new Font("Arial", Font.PLAIN, 40));
             g2.setColor(Color.BLACK);
             g2.drawRect(10, 640, 50, 50);
@@ -827,9 +857,9 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.drawString("100", 220, 685);
             g2.drawString("200", 280, 685);
 
-            Color hellGrau= new Color(230, 230, 230);
+            Color hellGrau = new Color(230, 230, 230);
             // Einfacher Turm
-            if (typ == 1){
+            if (typ == 1) {
                 g2.setColor(hellGrau);
                 g2.fillRect(80, 620, 60, 70);
             }
@@ -837,16 +867,16 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.fillOval(90, 630, 40, 40);
 
             // Sniper
-            if (typ == 2){
+            if (typ == 2) {
                 g2.setColor(hellGrau);
                 g2.fillRect(140, 620, 60, 70);
             }
-            Color darkGreen= new Color(0, 100, 0);
+            Color darkGreen = new Color(0, 100, 0);
             g2.setColor(darkGreen);
             g2.fillOval(150, 630, 40, 40);
 
             // Shotgun
-            if (typ == 3){
+            if (typ == 3) {
                 g2.setColor(hellGrau);
                 g2.fillRect(200, 620, 60, 70);
             }
@@ -854,7 +884,7 @@ public class GamePanel extends JPanel implements MouseListener {
             g2.fillOval(210, 630, 40, 40);
 
             // Bank
-            if (typ == 4){
+            if (typ == 4) {
                 g2.setColor(hellGrau);
                 g2.fillRect(260, 620, 60, 70);
             }
@@ -873,10 +903,8 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
-
-
         // Game Over
-        if (gameOver && !spielMunueOffen){
+        if (gameOver && !spielMunueOffen) {
 
             g2.setColor(Color.WHITE);
             g2.setFont(new Font("Arial", Font.PLAIN, 50));
@@ -889,14 +917,14 @@ public class GamePanel extends JPanel implements MouseListener {
 
         }
 
-        if (spielMunueOffen){
+        if (spielMunueOffen) {
             inGameMenuePanel.menueGameOver(g2);
         }
 
 
-
         g2.dispose();
     }
+
 
 
     @Override
@@ -1012,6 +1040,28 @@ public class GamePanel extends JPanel implements MouseListener {
             }
 
             if (mousex > 410 && mousex < 590 && mousey > 450 && mousey < 480){
+
+                // Den spielstand reseten
+                leben = 20;
+                geld = 100;
+
+                gegnerAufBildschirm = 0;
+
+                einstellungenOffen = false;
+
+                enemies.clear();
+                fastEnemies.clear();
+                strongEnemies.clear();
+                bosses.clear();
+                projektiele.clear();
+                plaziertx.clear();
+                plazierty.clear();
+
+                towers.clear();
+                banks.clear();
+
+                welle = 0;
+
 
                 cardLayout.show(hauptPanel ,"menu");
 
