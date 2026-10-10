@@ -1,5 +1,6 @@
 package ch.alexb.tower.ui.panles;
 
+import ch.alexb.tower.ui.Bank;
 import ch.alexb.tower.ui.Tower;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ public class UpgradePanel extends JPanel {
     }
 
 
-    public void upgrademenue(Graphics g2, Tower tower){
+    public void towerUpgrademenue(Graphics g2, Tower tower){
 
         g2.setColor(Color.WHITE);
 
@@ -87,4 +88,46 @@ public class UpgradePanel extends JPanel {
 
 
     }
+
+    public void bankUpgradeMenue (Graphics g2, Bank bank) {
+
+        g2.setColor(Color.WHITE);
+
+        g2.fillRect(700, 0, 300, 700);
+
+
+        g2.setColor(Color.BLACK);
+        g2.setFont(new Font("Arial", Font.PLAIN, 25));
+        g2.drawString("Bank Upgrades" , 725, 25);
+        g2.setFont(new Font("Arial", Font.PLAIN, 15));
+
+
+        g2.drawRect(725, 65, 160, 70);
+        g2.drawString(bank.getMoreMoneyUpgrades() + "/3  More cash", 730, 80);
+        g2.drawString("+100 Coins", 730, 100);
+
+        if (bank.getMoreMoneyUpgrades() < 3){
+            g2.drawString(bank.getMoreMoneyUpgradeKosten() + " Coins", 730, 120);
+        }else {
+            g2.drawString("MAX", 730 ,120);
+        }
+
+        // X zum Schliessen
+        g2.setColor(Color.RED);
+        g2.drawRect(950, 0, 50, 50);
+        g2.setFont(new Font("Arial", Font.PLAIN, 40));
+        g2.drawString("X", 962, 40);
+
+
+        g2.drawRect(725, 600, 160, 60);
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        rueckerstattung = bank.getRueckerstattung();
+        g2.drawString("Sell " + rueckerstattung, 740, 635);
+
+    }
+
+
+
+
+
 }

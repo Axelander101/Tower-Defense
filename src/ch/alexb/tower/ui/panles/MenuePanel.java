@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class MenuePanel {
 
-    public void menue(Graphics g2){
+    public void menueGameOver(Graphics g2){
 
         int[] x = {425, 425, 475};
         int[] y = {360, 400, 380};

@@ -23,72 +23,53 @@ public class Projektiel {
 
 
 
-    public Projektiel(int towerX, int towerY, int enemyX, int enemyY, double enemyGeschwindigkeit, double entfernung2, Tower tower) {
+    public Projektiel(int towerX, int towerY, int enemyX, int enemyY, double enemyGeschwindigkeit, double reichweite, Tower tower){
 
+        this.x = towerX;
+        this.y = towerY;
         this.tower = tower;
 
-        // Projektil startet ungefähr in ch.alexb.tower.ui.Tower-Mitte
-        x = towerX;
-        y = towerY;
+        double projektielGeschwindigkeit = 8;
 
+        double dx = enemyX - towerX;
+        double dy = enemyY - towerY;
 
-        // Entfernung ch.alexb.tower.ui.Tower -> Gegner
-        double dx = enemyX - x;
-        double dy = enemyY - y;
+        double a = enemyGeschwindigkeit * enemyGeschwindigkeit - projektielGeschwindigkeit * projektielGeschwindigkeit;
+        double b = 2 * dx * enemyGeschwindigkeit;
+        double c = dx * dx + dy * dy;
 
-        double entfernung = Math.sqrt(dx * dx + dy * dy);
+        double diskriminante = b * b - 4 * a * c;
 
+        double zeit = 0;
 
-        // Ungefähre Flugzeit
-        double flugzeit = entfernung / projektielGeschwindigkeit;
+        if (diskriminante >= 0){
 
+            double zeit1 = (-b + Math.sqrt(diskriminante)) / (2 * a);
+            double zeit2 = (-b - Math.sqrt(diskriminante)) / (2 * a);
 
-        // Vorhersage:
-        // Gegner läuft nach rechts
+            if (zeit1 > 0 && zeit2 > 0){
+                zeit = Math.min(zeit1, zeit2);
 
+            }else if (zeit1 > 0){
+                zeit = zeit1;
 
-
-        if (towerX - 300 < enemyX) {
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 10;
-        } else if (towerX - 300 > enemyX && towerX-200 < enemyY){
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 20;
-        } else if (towerX-200 > enemyY && towerX -100 < enemyX) {
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 30;
-        } else if (towerX -100 > enemyX && enemyX < towerX) {
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2  * flugzeit + entfernung / 80;
-        } else if (enemyX < towerX && towerX + 100 > enemyX) {
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 80;
-        } else if (towerX + 100 < enemyX && towerX + 200 > enemyX) {
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 30;
-        } else if (towerX + 200 < enemyX && towerX + 300 > enemyX){
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 20;
-        } else if(towerX + 300 > enemyX){
-            treffpunktX = enemyX + enemyGeschwindigkeit / 1.2 * flugzeit + entfernung / 10;
+            }else if (zeit2 > 0){
+                zeit = zeit2;
+            }
         }
 
+        double zielX = enemyX + enemyGeschwindigkeit * zeit;
+        double zielY = enemyY;
 
-        double treffpunktY = enemyY;
+        double richtungX = zielX - towerX;
+        double richtungY = zielY - towerY;
 
+        double entfernung = Math.sqrt(richtungX * richtungX + richtungY * richtungY);
 
-        // Richtung zum Treffpunkt
-        dx = treffpunktX - x;
-        dy = treffpunktY - y;
+        bewegungX = richtungX / entfernung * projektielGeschwindigkeit + 2;
+        bewegungY = richtungY / entfernung * projektielGeschwindigkeit + 2;
 
-
-        double distanz = Math.sqrt(dx * dx + dy * dy);
-
-
-        if (distanz != 0) {
-
-            double richtungX = dx / distanz;
-
-            double richtungY = dy / distanz;
-
-
-            bewegungX = richtungX * projektielGeschwindigkeit;
-
-            bewegungY = richtungY * projektielGeschwindigkeit;
-        }
+        System.out.println(projektielGeschwindigkeit);
     }
 
 

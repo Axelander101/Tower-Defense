@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements MouseListener {
     ArrayList<StrongEnemy> strongEnemies = new ArrayList<>();
     ArrayList<Boss> bosses = new ArrayList<>();
     ArrayList<Tower> towers = new ArrayList<>();
+    ArrayList<Bank> banks = new ArrayList<>();
     ArrayList<Projektiel> projektiele = new ArrayList<>();
 
     ArrayList<Integer> plaziertx = new ArrayList<>();
@@ -26,6 +27,7 @@ public class GamePanel extends JPanel implements MouseListener {
     MenuePanel menuePanel= new MenuePanel();
 
     Tower ausgewaehlterTower;
+    Bank ausgewaehlteBank;
 
     boolean upgradeMenueOffen = false;
     boolean einstellungenOffen = false;
@@ -36,16 +38,20 @@ public class GamePanel extends JPanel implements MouseListener {
     int leben = 20;
     int geld = 10000;
 
+
     boolean gameOver = false;
     boolean spielMunueOffen = false;
+    boolean turmMenueOffen = false;
 
     boolean doppelgeschwindigkeit = false;
+
+    boolean bankSchonGezahlt = false;
 
     private static final int WEG_Y = 330;
     private static final int SPIEL_BREITE = 1000;
     private static final int SPIEL_HOEHE = 700;
 
-    int welle = 0;
+    int welle = 5;
     int gegnerGetoetet = 0;
     int totalGeld = 100;
 
@@ -60,6 +66,8 @@ public class GamePanel extends JPanel implements MouseListener {
     double reichweite;
 
     int zahl;
+
+    int typ = 1;
 
     int weitesterGegneraufStrecke = 0;
 
@@ -83,6 +91,21 @@ public class GamePanel extends JPanel implements MouseListener {
 
     Random random = new Random();
 
+    public void positionFreigeben(int x, int y){
+
+        for (int i = 0; i < plaziertx.size(); i++){
+
+            if (plaziertx.get(i) == x && plazierty.get(i) == y){
+
+                plaziertx.remove(i);
+
+                plazierty.remove(i);
+
+                break;
+            }
+        }
+    }
+
 
     public GamePanel() {
 
@@ -100,6 +123,10 @@ public class GamePanel extends JPanel implements MouseListener {
 
              shootLautstaerke = -40.0f + wert * 0.4f;
 
+             if (wert == 0){
+                 shootLautstaerke = -50.0f;
+             }
+
         });
 
         setLayout(null);
@@ -114,6 +141,10 @@ public class GamePanel extends JPanel implements MouseListener {
             int wert = popLautstaerkeSlider.getValue();
 
             popLautstaerke = -40.0f + wert * 0.4f;
+
+            if (wert == 0){
+                popLautstaerke = -50.0f;
+            }
 
         });
 
@@ -136,13 +167,13 @@ public class GamePanel extends JPanel implements MouseListener {
                 budget = welle * 10 * (1 + (double) welle / 10);
             }
 
-            if (welle % 10 != 0 && welle < 5){
+            if (welle % 10 != 0  && welle < 5){
                 zahl = 1;
             }
 
-            if (welle % 10 != 0 && welle >= 5 && welle < 15){
-                //zahl = random.nextInt(1, 3);
-                zahl = 2;
+            if ( welle % 10 != 0 && welle >= 5 && welle < 15 || welle == 10){
+
+                zahl = random.nextInt(1, 3);
             }
 
             if (welle % 10 != 0 && welle >= 15){
@@ -151,7 +182,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             // Boss jede 10. Welle
-            if (welle % 10 == 0 && budget > 0){
+            if (welle % 10 == 0 && budget > 0 && welle != 10){
 
                 Boss boss = new Boss();
 
@@ -202,6 +233,8 @@ public class GamePanel extends JPanel implements MouseListener {
                     }
                 }
             }
+
+            bankSchonGezahlt = false;
         });
 
 
@@ -555,6 +588,15 @@ public class GamePanel extends JPanel implements MouseListener {
             }
 
 
+            if (gegnerAufBildschirm <= 0 && !bankSchonGezahlt){
+                for (Bank bank: banks){
+                    geld += bank.getEinkommen();
+                }
+                bankSchonGezahlt = true;
+            }
+
+
+
             repaint();
         });
 
@@ -576,6 +618,12 @@ public class GamePanel extends JPanel implements MouseListener {
         strongEnemies.clear();
         bosses.clear();
         projektiele.clear();
+        plaziertx.clear();
+        plazierty.clear();
+
+        towers.clear();
+        banks.clear();
+        repaint();
     }
 
 
@@ -644,10 +692,16 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
-        // ch.alexb.tower.ui.Tower zeichnen
+        // Tower zeichnen
         for (Tower tower : towers){
 
-            tower.towerzeichnen(g2, tower.getMousex(), tower.getMousey());
+            tower.towerzeichnen(g2);
+        }
+
+
+        // Banken zeichnen
+        for (Bank bank: banks){
+            bank.bankZeichnen(g2);
         }
 
 
@@ -710,11 +764,86 @@ public class GamePanel extends JPanel implements MouseListener {
             popLautstaerkeSlider.setVisible(false);
         }
 
-        // Upgrade Menue
+        // Tower Upgrade Menue
         if (upgradeMenueOffen && ausgewaehlterTower != null){
 
-            upgradePanel.upgrademenue(g2, ausgewaehlterTower);
+            upgradePanel.towerUpgrademenue(g2, ausgewaehlterTower);
         }
+
+        // Bank Upgrade Menue
+        if (upgradeMenueOffen && ausgewaehlteBank != null){
+
+            upgradePanel.bankUpgradeMenue(g2, ausgewaehlteBank);
+        }
+
+
+        //  Turmmenue anzeigen
+        if (!turmMenueOffen) {
+            g2.setFont(new Font("Arial", Font.PLAIN, 50));
+            g2.setColor(Color.BLACK);
+            g2.drawRect(10, 640, 50, 50);
+            g2.drawString("➡", 15, 682);
+        }else {
+            g2.setFont(new Font("Arial", Font.PLAIN, 40));
+            g2.setColor(Color.BLACK);
+            g2.drawRect(10, 640, 50, 50);
+            g2.drawString("⬅", 15, 682);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            g2.drawRect(70, 620, 400, 70);
+
+            // Kosten
+            g2.drawString("50", 102, 685);
+            g2.drawString("100", 160, 685);
+            g2.drawString("100", 220, 685);
+            g2.drawString("200", 280, 685);
+
+            Color hellGrau= new Color(230, 230, 230);
+            // Einfacher Turm
+            if (typ == 1){
+                g2.setColor(hellGrau);
+                g2.fillRect(80, 620, 60, 70);
+            }
+            g2.setColor(Color.GRAY);
+            g2.fillOval(90, 630, 40, 40);
+
+            // Sniper
+            if (typ == 2){
+                g2.setColor(hellGrau);
+                g2.fillRect(140, 620, 60, 70);
+            }
+            Color darkGreen= new Color(0, 100, 0);
+            g2.setColor(darkGreen);
+            g2.fillOval(150, 630, 40, 40);
+
+            // Shotgun
+            if (typ == 3){
+                g2.setColor(hellGrau);
+                g2.fillRect(200, 620, 60, 70);
+            }
+            g2.setColor(Color.RED);
+            g2.fillOval(210, 630, 40, 40);
+
+            // Bank
+            if (typ == 4){
+                g2.setColor(hellGrau);
+                g2.fillRect(260, 620, 60, 70);
+            }
+            Color brown = new Color(139, 69, 19);
+            g2.setColor(brown);
+            g2.fillRect(270, 630, 40, 40);
+
+
+            // Kosten
+            g2.setColor(Color.BLACK);
+            g2.drawString("50", 102, 685);
+            g2.drawString("100", 160, 685);
+            g2.drawString("100", 220, 685);
+            g2.drawString("200", 280, 685);
+
+        }
+
+
 
 
         // Game Over
@@ -732,7 +861,7 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
         if (spielMunueOffen){
-            menuePanel.menue(g2);
+            menuePanel.menueGameOver(g2);
         }
 
 
@@ -806,12 +935,34 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
+        // Turmmenue öffnen
+        if (mousex > 10 && mousex < 60 && mousey > 640 && mousey < 690){
+            turmMenueOffen = !turmMenueOffen;
+
+        }
+
+
+        // Turm auswählen
+        if (turmMenueOffen){
+            if (mousex > 90 && mousex < 130 && mousey > 620 && mousey < 690){
+                typ = 1;
+            }else if(mousex > 150 && mousex < 190 && mousey > 620 && mousey < 690){
+                typ = 2;
+            }else if(mousex > 210 && mousex < 250 && mousey > 620 && mousey < 690){
+                typ = 3;
+            }else if(mousex > 270 && mousex < 310 && mousey > 620 && mousey < 690){
+                typ = 4;
+            }
+        }
+
+
         // Einstellungen im Spiel öffnen
         if (mousex > 930 && mousex < 980 && mousey < 70 && mousey > 10 && !upgradeMenueOffen){
             if (!einstellungenOffen) {
                 einstellungenOffen = true;
             }
         }
+
 
         // Einstellungsmenue ist offen
         if (einstellungenOffen){
@@ -835,7 +986,7 @@ public class GamePanel extends JPanel implements MouseListener {
         }
 
 
-        // Upgrade Menue ist offen
+        // Tower Upgrade Menue ist offen
         if (upgradeMenueOffen && ausgewaehlterTower != null){
 
 
@@ -854,11 +1005,19 @@ public class GamePanel extends JPanel implements MouseListener {
 
             // Tower verkaufen
             if (mousex >= 725 && mousex <= 885 && mousey >= 600 && mousey <= 660){
+                geld += ausgewaehlterTower.getRueckerstattung();
+
+                positionFreigeben(ausgewaehlterTower.getMousex(), ausgewaehlterTower.getMousey());
+
+                towers.remove(ausgewaehlterTower);
+
                 upgradeMenueOffen = false;
 
-                towers.removeIf(tower -> ausgewaehlterTower.equals(tower));
-
                 ausgewaehlterTower = null;
+
+                repaint();
+
+                return;
 
 
             }
@@ -933,14 +1092,90 @@ public class GamePanel extends JPanel implements MouseListener {
             return;
         }
 
+        // Bank Upgrade Menue ist offen
+        if (upgradeMenueOffen && ausgewaehlteBank != null){
+
+            // Schliessen
+            if (mousex >= 950 && mousex <= 1000 && mousey >= 0 && mousey <= 50){
+
+                upgradeMenueOffen = false;
+
+                ausgewaehlteBank = null;
+
+                repaint();
+
+                return;
+            }
+
+            // Verkaufen
+            if (mousex >= 725 && mousex <= 885 && mousey >= 600 && mousey <= 660){
+                geld += ausgewaehlteBank.getRueckerstattung();
+
+                positionFreigeben(ausgewaehlteBank.getX(), ausgewaehlteBank.getY());
+
+                banks.remove(ausgewaehlteBank);
+
+                upgradeMenueOffen = false;
+
+                ausgewaehlteBank = null;
+
+                repaint();
+
+                return;
+
+
+            }
+
+            // Upgraden
+            if (mousex > 725 && mousex < 885 && mousey > 65 && mousey < 135){
+
+                int kosten = ausgewaehlteBank.getMoreMoneyUpgradeKosten();
+
+
+                if (ausgewaehlteBank.getMoreMoneyUpgrades() < 3 && geld >= kosten){
+
+                    geld -= kosten;
+
+                    ausgewaehlteBank.moreMoneyUpgradeGekauft();
+
+                    ausgewaehlteBank.rueckerstattung(kosten);
+
+                    repaint();
+                }
+
+
+                return;
+            }
+
+            return;
+        }
+
 
         // Vorhandenen Tower anklicken
         for (Tower tower : towers){
 
-            if (!einstellungenOffen){
+            if (!einstellungenOffen && !turmMenueOffen){
                 if (tower.aufTowerGeklickt(mousex, mousey)) {
 
                     ausgewaehlterTower = tower;
+                    ausgewaehlteBank = null;
+
+                    upgradeMenueOffen = true;
+
+                    repaint();
+
+                    return;
+                }
+            }
+        }
+
+        // Vorhandene Banken anklicken
+        for (Bank bank: banks){
+            if (!einstellungenOffen && !turmMenueOffen){
+                if (bank.aufBankGeklickt(mousex, mousey)) {
+
+                    ausgewaehlteBank = bank;
+                    ausgewaehlterTower = null;
 
                     upgradeMenueOffen = true;
 
@@ -953,33 +1188,72 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Neuen Tower platzieren
-        if (geld >= 50){
+        Bank bank = new Bank();
+        Tower tower = new Tower();
+        if (geld >= tower.getKosten()){
 
-            if (!einstellungenOffen){
-                if (mousex < 930 || mousex > 1000 && mousey < 630 || mousey > 700){
-                    if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
+            if (!einstellungenOffen && !turmMenueOffen){
+                if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700){
+                    if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
+                        if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
 
-                        Tower tower = new Tower();
 
 
-                        if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
+                            if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
+                                    bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                            tower.newTower(mousex, mousey);
+                                if (typ <= 3) {
+                                    tower.newTower(mousex, mousey, typ);
+                                    geld -= tower.getKosten();
 
-                            geld -= 50;
+                                    plaziertx.add(mousex);
 
-                            plaziertx.add(mousex);
+                                    plazierty.add(mousey);
 
-                            plazierty.add(mousey);
+                                    towers.add(tower);
 
-                            towers.add(tower);
-
-                            repaint();
+                                    repaint();
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+
+
+        // Neu Bank plazieren
+        if (geld >= bank.getKosten()) {
+
+            if (!einstellungenOffen && !turmMenueOffen) {
+                if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700) {
+                    if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
+                        if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
+
+
+                            if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
+                                    bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
+
+                                if (typ == 4) {
+                                    bank.newBank(mousex, mousey);
+
+                                    geld -= bank.getKosten();
+
+                                    plaziertx.add(mousex);
+
+                                    plazierty.add(mousey);
+
+                                    banks.add(bank);
+
+                                    repaint();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 

@@ -12,26 +12,43 @@ public class Tower {
 
     private boolean geschossen = false;
 
-    private int reichweite = 140;
-    private int demage = 1;
-    private int pearcing = 1;
+    private int reichweite;
+    private int demage;
+    private int pearcing;
 
     private int reachUpgradesGekauft = 0;
     private int demageUpgradesGekauft = 0;
     private int pearcingUpgradesGekauft = 0;
 
-    private int rueckerstattung = 25;
+    private int rueckerstattung = 0;
+
+    private int kosten;
+
+    private int TowerTyp;
+
+    private boolean typSchonBestimmt = false;
 
 
-    public void towerzeichnen(Graphics g2, int mousex, int mousey){
+    public void towerzeichnen(Graphics g2){
 
-        g2.setColor(Color.GRAY);
+        switch (TowerTyp) {
+            case 1 -> {
 
-        g2.fillOval(mousex - 30, mousey - 30, 60, 60);
+                g2.setColor(Color.GRAY);
+                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
+            }
 
-        //g2.drawOval(mousex - reichweite /2, mousey - reichweite / 2, reichweite, reichweite);
+            case 2 -> {
+                Color darkGreen= new Color(0, 100, 0);
+                g2.setColor(darkGreen);
+                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
+            }
 
-
+            case 3 -> {
+                g2.setColor(Color.RED);
+                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
+            }
+        }
     }
 
 
@@ -45,10 +62,47 @@ public class Tower {
     }
 
 
-    public void newTower(int mousex, int mousey){
+    public void newTower(int mousex, int mousey, int typ){
 
         this.mousex = mousex;
         this.mousey = mousey;
+
+        if(!typSchonBestimmt){
+
+            TowerTyp = typ;
+            typSchonBestimmt = true;
+        }
+
+        switch (TowerTyp) {
+            // Einfacher Turm
+            case 1 -> {
+                reichweite = 140;
+                demage = 1;
+                pearcing = 1;
+
+                kosten = 50;
+                rueckerstattung += 25;
+            }
+
+            // Sniper
+            case 2 -> {
+                reichweite = 300;
+                demage = 2;
+                pearcing = 1;
+
+                kosten = 150;
+                rueckerstattung += 75;
+            }
+
+            case 3 -> {
+                reichweite = 140;
+                demage = 3;
+                pearcing = 1;
+
+                kosten = 200;
+                rueckerstattung += 100;
+            }
+        }
     }
 
 
@@ -179,6 +233,14 @@ public class Tower {
 
     public int getPearcing(){
         return pearcing;
+    }
+
+    public int getKosten(){
+        return kosten;
+    }
+
+    public int getTowerTyp(){
+        return TowerTyp;
     }
 
 }
