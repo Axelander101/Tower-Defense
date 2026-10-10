@@ -32,7 +32,7 @@ public class UpgradePanel extends JPanel {
         // Reach
         g2.drawRect(725, 65, 160, 70);
         g2.drawString(tower.getReachUpgradesGekauft() + "/3  More reach", 730, 80);
-        g2.drawString("+50 reach", 730, 100);
+        g2.drawString("+25 reach", 730, 100);
 
 
         if (tower.getReachUpgradesGekauft() < 3){

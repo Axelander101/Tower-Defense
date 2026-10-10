@@ -5,8 +5,8 @@ import java.awt.*;
 public class FastEnemy {
     private int x;
     private int y;
-    private int leben = 2;
-    private int geschwindigkeit = 4;
+    private int leben = 3;
+    private int geschwindigkeit = 3;
 
 
     public void fastEnemySpawn(Graphics g, int curenty){

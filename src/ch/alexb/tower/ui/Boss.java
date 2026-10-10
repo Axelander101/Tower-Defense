@@ -16,6 +16,10 @@ public class Boss {
         g.fillOval(x, y + 35, 50, 50);
     }
 
+    public void leben(double lebenMulti){
+        leben = (int) (leben * lebenMulti);
+    }
+
 
     public void bewegen(){
         x += geschwindigkeit;

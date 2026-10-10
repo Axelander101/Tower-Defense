@@ -5,7 +5,7 @@ import java.awt.*;
 public class StrongEnemy {
     private int x;
     private int y;
-    private int leben = 5;
+    private int leben = 10;
     private double geschwindigkeit = 1.5;
 
 

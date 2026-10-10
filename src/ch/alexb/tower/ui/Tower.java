@@ -173,7 +173,7 @@ public class Tower {
     public void reachUpgradeKaufen(){
         if (reachUpgradesGekauft < 3){
             reachUpgradesGekauft += 1;
-            reichweite += 50;
+            reichweite += 25;
         }
     }
 
@@ -235,8 +235,22 @@ public class Tower {
         return pearcing;
     }
 
-    public int getKosten(){
+    public int getKosten(int typ){
+
+        switch (typ){
+            case 1 -> {
+                kosten = 50;
+            }
+            case 2 -> {
+                kosten = 150;
+            }
+            case 3 -> {
+                kosten = 200;
+            }
+        }
+
         return kosten;
+
     }
 
     public int getTowerTyp(){

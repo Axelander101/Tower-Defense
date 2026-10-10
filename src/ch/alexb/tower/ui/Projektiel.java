@@ -69,7 +69,6 @@ public class Projektiel {
         bewegungX = richtungX / entfernung * projektielGeschwindigkeit + 2;
         bewegungY = richtungY / entfernung * projektielGeschwindigkeit + 2;
 
-        System.out.println(projektielGeschwindigkeit);
     }
 
 

@@ -36,7 +36,7 @@ public class GamePanel extends JPanel implements MouseListener {
     JSlider popLautstaerkeSlider = new JSlider(0, 100, 50);
 
     int leben = 20;
-    int geld = 10000;
+    int geld = 100;
 
 
     boolean gameOver = false;
@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements MouseListener {
     private static final int SPIEL_BREITE = 1000;
     private static final int SPIEL_HOEHE = 700;
 
-    int welle = 5;
+    int welle = 0;
     int gegnerGetoetet = 0;
     int totalGeld = 100;
 
@@ -164,7 +164,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
             if (gegnerAufBildschirm == 0 && budget < 2){
                 welle += 1;
-                budget = welle * 10 * (1 + (double) welle / 10);
+                budget = welle * 10 * (1 + (double) welle / 10) * welle / 2;
             }
 
             if (welle % 10 != 0  && welle < 5){
@@ -185,6 +185,8 @@ public class GamePanel extends JPanel implements MouseListener {
             if (welle % 10 == 0 && budget > 0 && welle != 10){
 
                 Boss boss = new Boss();
+
+                boss.leben(welle * 2);
 
                 budget = 0;
                 gegnerAufBildschirm += 1;
@@ -1190,7 +1192,7 @@ public class GamePanel extends JPanel implements MouseListener {
         // Neuen Tower platzieren
         Bank bank = new Bank();
         Tower tower = new Tower();
-        if (geld >= tower.getKosten()){
+        if (geld >= tower.getKosten(typ)){
 
             if (!einstellungenOffen && !turmMenueOffen){
                 if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700){
@@ -1204,7 +1206,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                                 if (typ <= 3) {
                                     tower.newTower(mousex, mousey, typ);
-                                    geld -= tower.getKosten();
+                                    geld -= tower.getKosten(typ);
 
                                     plaziertx.add(mousex);
 
