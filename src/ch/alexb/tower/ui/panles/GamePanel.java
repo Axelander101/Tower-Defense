@@ -158,6 +158,12 @@ public class GamePanel extends JPanel implements MouseListener {
         // Gegner spawnen
         spawnTimer = new Timer(spawnDelay, e -> {
 
+            // Schnellere spawnrate nach jeder Runde
+            spawnDelay -= welle * 3;
+            if (welle > 100){
+                minSpawnDelay -= (welle -100) * 3;
+            }
+
             int delay = random.nextInt(minSpawnDelay, spawnDelay);
 
             spawnTimer.setDelay(delay);
@@ -203,6 +209,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         gegnerAufBildschirm += 1;
 
                         Enemy enemy = new Enemy();
+                        enemy.setLeben(welle);
 
                         enemies.add(enemy);
                     }
@@ -217,6 +224,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         FastEnemy fastenemy = new FastEnemy();
 
+                        fastenemy.setLeben(welle);
                         fastEnemies.add(fastenemy);
                     }
                 }
@@ -231,6 +239,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         StrongEnemy strongEnemy = new StrongEnemy();
 
+                        strongEnemy.setLeben(welle);
                         strongEnemies.add(strongEnemy);
                     }
                 }

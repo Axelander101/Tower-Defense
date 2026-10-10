@@ -22,6 +22,15 @@ public class FastEnemy {
 
     }
 
+    public void setLeben(int welle){
+
+        welle -= 10;
+
+        if (welle > 0){
+            leben = leben * welle / 10;
+        }
+    }
+
     public int getX(){
         return x;
     }
