@@ -3,79 +3,23 @@ package ch.alexb.tower.ui;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Enemy {
-    private int x;
-    private int y;
-    private int leben = 3;
-    private int geschwindigkeit = 2;
-    private int aktuellerWegPunkt = 0;
-
-    public void normalEnemySpawn(Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillOval((int) x,(int) y - 15, 30, 30 );
-
-    }
+public class Enemy extends Gegner {
 
     public Enemy(ArrayList<Point> wegPunkte){
 
         x = wegPunkte.get(0).x;
         y = wegPunkte.get(0).y;
 
-        aktuellerWegPunkt = 1;
+        geschwindigkeit = 1.5;
+        leben = 1;
     }
 
-    public void bewegen(ArrayList<Point> wegPunkte){
 
-        if (aktuellerWegPunkt >= wegPunkte.size()){
-            return;
-        }
+    public void normalEnemySpawn(Graphics g){
 
-        Point ziel = wegPunkte.get(aktuellerWegPunkt);
+        g.setColor(Color.BLACK);
 
-        double dx = ziel.x - x;
-        double dy = ziel.y - y;
-
-        double entfernung = Math.sqrt(dx * dx + dy * dy);
-
-
-        if (entfernung <= geschwindigkeit){
-
-            x = ziel.x;
-            y = ziel.y;
-
-            aktuellerWegPunkt++;
-
-            return;
-        }
-
-
-        x = (int) (x + dx / entfernung * geschwindigkeit);
-        y = (int) (y + dy / entfernung * geschwindigkeit);
-    }
-
-    public void setLeben(int welle){
-
-        welle -= 10;
-
-        if (welle > 0){
-            leben = leben * welle / 10;
-        }
-    }
-
-    public int getX(){
-        return x;
-    }
-
-    public int getY(){
-        return y;
-    }
-
-    public int getLeben(){
-        return leben;
-    }
-
-    public void schadenNehmen(int schaden) {
-        leben -= schaden;
+        g.fillOval((int) x - 15, (int) y - 15, 30, 30);
     }
 }
 

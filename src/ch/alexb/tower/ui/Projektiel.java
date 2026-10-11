@@ -23,7 +23,7 @@ public class Projektiel {
 
 
 
-    public Projektiel(int towerX, int towerY, int enemyX, int enemyY, double enemyGeschwindigkeit, double reichweite, Tower tower){
+    public Projektiel(int towerX, int towerY, Gegner gegner, ArrayList<Point> wegPunkte, double reichweite, Tower tower){
 
         this.x = towerX;
         this.y = towerY;
@@ -31,44 +31,32 @@ public class Projektiel {
 
         double projektielGeschwindigkeit = 8;
 
-        double dx = enemyX - towerX;
-        double dy = enemyY - towerY;
-
-        double a = enemyGeschwindigkeit * enemyGeschwindigkeit - projektielGeschwindigkeit * projektielGeschwindigkeit;
-        double b = 2 * dx * enemyGeschwindigkeit;
-        double c = dx * dx + dy * dy;
-
-        double diskriminante = b * b - 4 * a * c;
-
         double zeit = 0;
 
-        if (diskriminante >= 0){
 
-            double zeit1 = (-b + Math.sqrt(diskriminante)) / (2 * a);
-            double zeit2 = (-b - Math.sqrt(diskriminante)) / (2 * a);
+        for (int i = 0; i < 10; i++){
 
-            if (zeit1 > 0 && zeit2 > 0){
-                zeit = Math.min(zeit1, zeit2);
+            Point.Double position = gegner.getPositionNachZeit(zeit, wegPunkte);
 
-            }else if (zeit1 > 0){
-                zeit = zeit1;
+            double dx = position.x - towerX;
+            double dy = position.y - towerY;
 
-            }else if (zeit2 > 0){
-                zeit = zeit2;
-            }
+            double entfernung = Math.sqrt(dx * dx + dy * dy);
+
+            zeit = entfernung / projektielGeschwindigkeit;
         }
 
-        double zielX = enemyX + enemyGeschwindigkeit * zeit;
-        double zielY = enemyY;
 
-        double richtungX = zielX - towerX;
-        double richtungY = zielY - towerY;
+        Point.Double ziel = gegner.getPositionNachZeit(zeit, wegPunkte);
+
+        double richtungX = ziel.x - towerX;
+        double richtungY = ziel.y - towerY;
 
         double entfernung = Math.sqrt(richtungX * richtungX + richtungY * richtungY);
 
-        bewegungX = richtungX / entfernung * projektielGeschwindigkeit + 2;
-        bewegungY = richtungY / entfernung * projektielGeschwindigkeit + 2;
 
+        bewegungX = richtungX / entfernung * projektielGeschwindigkeit;
+        bewegungY = richtungY / entfernung * projektielGeschwindigkeit;
     }
 
 

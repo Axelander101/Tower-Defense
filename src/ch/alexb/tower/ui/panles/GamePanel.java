@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,6 +25,8 @@ public class GamePanel extends JPanel implements MouseListener {
 
     ArrayList<Integer> plaziertx = new ArrayList<>();
     ArrayList<Integer> plazierty = new ArrayList<>();
+
+    Object weitesterGegneraufStrecke = null;
 
     UpgradePanel upgradePanel = new UpgradePanel();
     InGameMenuePanel inGameMenuePanel = new InGameMenuePanel();
@@ -75,7 +78,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
     int typ = 1;
 
-    int weitesterGegneraufStrecke = 0;
 
     int spielgeschwindigkeit = 1;
 
@@ -112,6 +114,44 @@ public class GamePanel extends JPanel implements MouseListener {
         }
     }
 
+    public double abstandZumNaechstenWegPunkt(Gegner gegner){
+
+        int punkt = gegner.getAktuellerWegPunkt();
+
+
+        if (punkt >= wegPunkte.size()){
+            return 0;
+        }
+
+
+        Point ziel = wegPunkte.get(punkt);
+
+        double dx = ziel.x - gegner.getX();
+        double dy = ziel.y - gegner.getY();
+
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public boolean istAufWeg(int x, int y){
+
+        int sicherheitsAbstand = 80;
+
+        for (int i = 0; i < wegPunkte.size() - 1; i++){
+
+            Point p1 = wegPunkte.get(i);
+            Point p2 = wegPunkte.get(i + 1);
+
+            double abstand = Line2D.ptSegDist(p1.x, p1.y, p2.x, p2.y, x, y);
+
+            if (abstand < sicherheitsAbstand){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void gameStarten(int ausgewaehlteMap){
 
         map = ausgewaehlteMap;
@@ -121,6 +161,7 @@ public class GamePanel extends JPanel implements MouseListener {
         if (map == 1){
             wegPunkte.add(new Point(0, 350));
             wegPunkte.add(new Point(1000, 350));
+            geld = 100;
         }
 
         if (map == 2){
@@ -130,6 +171,8 @@ public class GamePanel extends JPanel implements MouseListener {
             wegPunkte.add(new Point(600, 500));
             wegPunkte.add(new Point(600, 200));
             wegPunkte.add(new Point(1000, 200));
+
+            geld = 150;
         }
 
         spawnTimer.start();
@@ -189,6 +232,7 @@ public class GamePanel extends JPanel implements MouseListener {
         // Gegner spawnen
         spawnTimer = new Timer(spawnDelay, e -> {
 
+
             // Schnellere spawnrate nach jeder Runde
             spawnDelay -= welle * 3;
             if (welle > 100){
@@ -202,6 +246,9 @@ public class GamePanel extends JPanel implements MouseListener {
             if (gegnerAufBildschirm == 0 && budget < 2){
                 welle += 1;
                 budget = welle * 10 * (1 + (double) welle / 10) * welle / 2;
+                if (welle == 0){
+                    welle = 1;
+                }
             }
 
             if (welle % 10 != 0  && welle < 5){
@@ -223,13 +270,14 @@ public class GamePanel extends JPanel implements MouseListener {
 
                 Boss boss = new Boss(wegPunkte);
 
-                boss.leben(welle * 2);
+                boss.setLeben(welle * 2);
 
                 budget = 0;
                 gegnerAufBildschirm += 1;
                 bosses.add(boss);
                 return;
             }
+
 
 
             switch (zahl){
@@ -240,7 +288,7 @@ public class GamePanel extends JPanel implements MouseListener {
                         gegnerAufBildschirm += 1;
 
                         Enemy enemy = new Enemy(wegPunkte);
-                        enemy.setLeben(welle);
+                        enemy.setLeben(4);
 
                         enemies.add(enemy);
                     }
@@ -255,7 +303,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         FastEnemy fastenemy = new FastEnemy(wegPunkte);
 
-                        fastenemy.setLeben(welle);
+                        fastenemy.setLeben(3);
                         fastEnemies.add(fastenemy);
                     }
                 }
@@ -270,7 +318,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
                         StrongEnemy strongEnemy = new StrongEnemy(wegPunkte);
 
-                        strongEnemy.setLeben(welle);
+                        strongEnemy.setLeben(10);
                         strongEnemies.add(strongEnemy);
                     }
                 }
@@ -285,75 +333,84 @@ public class GamePanel extends JPanel implements MouseListener {
 
             schiessenTimer.setDelay(shootDelay);
 
+
+            ArrayList<Gegner> alleGegner = new ArrayList<>();
+
+            alleGegner.addAll(enemies);
+            alleGegner.addAll(fastEnemies);
+            alleGegner.addAll(strongEnemies);
+            alleGegner.addAll(bosses);
+
+
             for (Tower tower : towers){
+
                 int towerX = tower.getMousex();
                 int towerY = tower.getMousey();
 
+                Gegner zielEnemy = null;
 
-                // Normale Gegner
-                for (Enemy enemy : enemies) {
+                int weitesterWegPunkt = -1;
 
-                    int enemyX = enemy.getX();
-                    int enemyY = WEG_Y + 35;
-
-                    if (enemyX > weitesterGegneraufStrecke && tower.istInReichweite(towerX, towerY, enemyX, enemyY)) {
-                        weitesterGegneraufStrecke = enemyX;
-                    }
-
-                }
+                double kleinsterAbstand = Double.MAX_VALUE;
 
 
-                // Schnelle Gegner
-                for (FastEnemy fastEnemy : fastEnemies) {
-                    int enemyX = fastEnemy.getX();
-                    int enemyY = WEG_Y + 35;
+                for (Gegner gegner : alleGegner){
 
-                    if (enemyX > weitesterGegneraufStrecke && tower.istInReichweite(towerX, towerY, enemyX, enemyY)) {
-                        weitesterGegneraufStrecke = enemyX;
-                    }
-                }
+                    if (tower.istInReichweite(towerX, towerY, gegner.getX(), gegner.getY())){
+
+                        int wegPunkt = gegner.getAktuellerWegPunkt();
 
 
-                // Starke Gegner
-                for (StrongEnemy strongEnemy : strongEnemies) {
-                    int enemyX = strongEnemy.getX();
-                    int enemyY = WEG_Y + 35;
+                        if (wegPunkt > weitesterWegPunkt){
 
-                    if (enemyX > weitesterGegneraufStrecke && tower.istInReichweite(towerX, towerY, enemyX, enemyY)) {
-                        weitesterGegneraufStrecke = enemyX;
-                    }
-                }
+                            zielEnemy = gegner;
+
+                            weitesterWegPunkt = wegPunkt;
+
+                            kleinsterAbstand = abstandZumNaechstenWegPunkt(gegner);
+                        }
 
 
-                // Boss
-                for (Boss boss : bosses) {
-                    int enemyX = boss.getX();
-                    int enemyY = WEG_Y + 35;
+                        else if (wegPunkt == weitesterWegPunkt){
 
-                    if (enemyX > weitesterGegneraufStrecke && tower.istInReichweite(towerX, towerY, enemyX, enemyY)) {
-                        weitesterGegneraufStrecke = enemyX;
+                            double abstand = abstandZumNaechstenWegPunkt(gegner);
+
+
+                            if (abstand < kleinsterAbstand){
+
+                                zielEnemy = gegner;
+
+                                kleinsterAbstand = abstand;
+                            }
+                        }
                     }
                 }
 
-                int enemyY = WEG_Y + 35;
 
-                boolean schiessen = tower.istInReichweite(towerX, towerY,weitesterGegneraufStrecke, enemyY);
+                if (zielEnemy != null){
+
+                    double reichweite = tower.Reichweite(
+                            towerX,
+                            towerY,
+                            zielEnemy.getX(),
+                            zielEnemy.getY()
+                    );
 
 
-                if (schiessen && !tower.hatGeschossen()){
+                    Projektiel projektiel = new Projektiel(
+                            towerX,
+                            towerY,
+                            zielEnemy,
+                            wegPunkte,
+                            reichweite,
+                            tower
+                    );
 
-                    reichweite = tower.Reichweite(towerX, towerY, weitesterGegneraufStrecke, enemyY);
-                    tower.schiessen(true);
-                    Projektiel projektiel = new Projektiel(towerX, towerY, weitesterGegneraufStrecke, enemyY, 1.5, reichweite, tower);
+
                     projektiele.add(projektiel);
 
                     Sound.abspielen("sounds/shoot.wav", shootLautstaerke);
-
                 }
-
-
-                weitesterGegneraufStrecke = 0;
-                tower.schiessen(false);
             }
         });
 
@@ -464,7 +521,7 @@ public class GamePanel extends JPanel implements MouseListener {
                     Enemy enemy = enemies.get(i);
 
                     int enemyX = enemy.getX();
-                    int enemyY = WEG_Y + 35;
+                    int enemyY = enemy.getY();
 
 
                     if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
@@ -506,7 +563,7 @@ public class GamePanel extends JPanel implements MouseListener {
                     FastEnemy fastEnemy = fastEnemies.get(i);
 
                     int enemyX = fastEnemy.getX();
-                    int enemyY = WEG_Y + 35;
+                    int enemyY = fastEnemy.getY();
 
 
                     if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
@@ -546,7 +603,7 @@ public class GamePanel extends JPanel implements MouseListener {
                     StrongEnemy strongEnemy = strongEnemies.get(i);
 
                     int enemyX = strongEnemy.getX();
-                    int enemyY = WEG_Y + 35;
+                    int enemyY = strongEnemy.getY();
 
                     if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
 
@@ -587,7 +644,7 @@ public class GamePanel extends JPanel implements MouseListener {
                     Boss boss = bosses.get(i);
 
                     int enemyX = boss.getX();
-                    int enemyY = WEG_Y + 35;
+                    int enemyY = boss.getY();
 
                     if (projektilX > enemyX - 15 && projektilX < enemyX + 35 && projektilY > enemyY - 15 && projektilY < enemyY + 35){
 
@@ -1280,10 +1337,7 @@ public class GamePanel extends JPanel implements MouseListener {
             if (!einstellungenOffen && !turmMenueOffen){
                 if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700){
                     if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
-                        if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
-
-
-
+                        if (!istAufWeg(mousex, mousey)){
                             if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
                                     bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
@@ -1315,22 +1369,23 @@ public class GamePanel extends JPanel implements MouseListener {
                     if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
                         if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
 
+                            if (!istAufWeg(mousex, mousey)) {
+                                if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
+                                        bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                            if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
-                                    bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
+                                    if (typ == 4) {
+                                        bank.newBank(mousex, mousey);
 
-                                if (typ == 4) {
-                                    bank.newBank(mousex, mousey);
+                                        geld -= bank.getKosten();
 
-                                    geld -= bank.getKosten();
+                                        plaziertx.add(mousex);
 
-                                    plaziertx.add(mousex);
+                                        plazierty.add(mousey);
 
-                                    plazierty.add(mousey);
+                                        banks.add(bank);
 
-                                    banks.add(bank);
-
-                                    repaint();
+                                        repaint();
+                                    }
                                 }
                             }
                         }
