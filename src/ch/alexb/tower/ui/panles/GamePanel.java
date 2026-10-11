@@ -234,16 +234,20 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             // Schnellere spawnrate nach jeder Runde
-            spawnDelay -= welle * 3;
-            if (welle > 100){
-                minSpawnDelay -= (welle -100) * 3;
-            }
-
             int delay = random.nextInt(minSpawnDelay, spawnDelay);
 
             spawnTimer.setDelay(delay);
 
             if (gegnerAufBildschirm == 0 && budget < 2){
+                // Schnellere spawnrate nach jeder Runde
+                spawnDelay -= welle * 3;
+
+                if (welle > 100){
+                    minSpawnDelay -= (welle -100) * 3;
+                }
+
+
+                // Gegner in den Runden bestimmen
                 welle += 1;
                 budget = welle * 10 * (1 + (double) welle / 10) * welle / 2;
                 if (welle == 0){
