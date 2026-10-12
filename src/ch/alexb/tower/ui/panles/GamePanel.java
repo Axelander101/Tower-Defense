@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.awt.geom.Path2D;
 
 public class GamePanel extends JPanel implements MouseListener {
 
@@ -170,9 +171,7 @@ public class GamePanel extends JPanel implements MouseListener {
             wegPunkte.add(new Point(0, 350));
             wegPunkte.add(new Point(1000, 350));
             geld = 100;
-        }
-
-        if (map == 2){
+        }else if (map == 2){
             wegPunkte.add(new Point(0, 350));
             wegPunkte.add(new Point(250, 350));
             wegPunkte.add(new Point(250, 500));
@@ -180,14 +179,21 @@ public class GamePanel extends JPanel implements MouseListener {
             wegPunkte.add(new Point(600, 200));
             wegPunkte.add(new Point(1000, 200));
 
-            geld = 150;
+            geld = 100;
+        }else if (map == 3){
+            wegPunkte.add(new Point(0, 230));
+            wegPunkte.add(new Point(900, 230));
+            wegPunkte.add(new Point(900, 470));
+            wegPunkte.add(new Point(0, 470));
+
+        }else if(map == 4){
+
         }
 
         spawnTimer.start();
         schiessenTimer.start();
         gameTimer.start();
     }
-
 
     // Wellen vorbereiten
     private int gegnerTypBestimmen(int aktuelleWelle) {
@@ -509,7 +515,12 @@ public class GamePanel extends JPanel implements MouseListener {
                 welleVorbereiten(welle);
 
                 // Banken dürfen am Ende dieser neuen Welle wieder auszahlen
-                bankSchonGezahlt = false;
+                if (gegnerAufBildschirm <= 0){
+                    for (Bank bank: banks){
+                        geld += bank.getEinkommen();
+                    }
+                }
+
             }
 
 
@@ -634,7 +645,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 enemy.bewegen(wegPunkte);
 
 
-                if (enemy.getX() >= SPIEL_BREITE){
+                if (enemy.getX() >= SPIEL_BREITE || enemy.getX() <= 0 || enemy.getY() >= SPIEL_HOEHE || enemy.getY() <= 0){
 
                     leben -= 1;
                     gegnerAufBildschirm -= 1;
@@ -653,7 +664,8 @@ public class GamePanel extends JPanel implements MouseListener {
                 FastEnemy fastEnemy = fastEnemies.get(i);
                 fastEnemy.bewegen(wegPunkte);
 
-                if (fastEnemy.getX() >= SPIEL_BREITE){
+                if (fastEnemy.getX() >= SPIEL_BREITE || fastEnemy.getX() <= 0 ||
+                        fastEnemy.getY() >= SPIEL_HOEHE || fastEnemy.getY() <= 0){
 
                     leben -= 1;
                     gegnerAufBildschirm -= 1;
@@ -673,7 +685,8 @@ public class GamePanel extends JPanel implements MouseListener {
                 strongEnemy.bewegen(wegPunkte);
 
 
-                if (strongEnemy.getX() >= SPIEL_BREITE){
+                if (strongEnemy.getX() >= SPIEL_BREITE || strongEnemy.getX() <= 0 ||
+                        strongEnemy.getY() >= SPIEL_HOEHE || strongEnemy.getY() <= 0){
 
                     leben -= 2;
                     gegnerAufBildschirm -= 1;
@@ -692,7 +705,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 Boss boss = bosses.get(i);
                 boss.bewegen(wegPunkte);
 
-                if (boss.getX() >= SPIEL_BREITE){
+                if (boss.getX() >= SPIEL_BREITE || boss.getX() <= 0 || boss.getY() >= SPIEL_HOEHE || boss.getY() <= 0){
 
                     leben -= 10;
                     gegnerAufBildschirm -= 1;
@@ -964,11 +977,14 @@ public class GamePanel extends JPanel implements MouseListener {
             setBackground(Color.GREEN);
         }else if(map == 2){
             setBackground(Color.YELLOW);
+        }else if(map == 3){
+            setBackground(Color.lightGray);
         }
+
+        g2.setStroke(new BasicStroke(100, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
 
         g2.setColor(Color.GRAY);
 
-        g2.setStroke(new BasicStroke(100, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
 
         for (int i = 0; i < wegPunkte.size() - 1; i++) {
 
