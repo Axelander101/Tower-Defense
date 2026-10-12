@@ -515,11 +515,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 welleVorbereiten(welle);
 
                 // Banken dürfen am Ende dieser neuen Welle wieder auszahlen
-                if (gegnerAufBildschirm <= 0){
-                    for (Bank bank: banks){
-                        geld += bank.getEinkommen();
-                    }
-                }
+                bankSchonGezahlt = false;
 
             }
 
@@ -534,13 +530,14 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             // Spawn-Geschwindigkeit für aktuelle Welle
-            int maxSpawnDelay = 950 - (welle - 1) * 6;
+            int maxSpawnDelay = 950 - (welle - 1) * 6 / spielgeschwindigkeit;
+            int minSpawnDelay = 100 / spielgeschwindigkeit;
 
             // Niemals schneller als max. 350 ms Obergrenze
-            maxSpawnDelay = Math.max(350, maxSpawnDelay);
+            maxSpawnDelay = Math.max(350 / spielgeschwindigkeit, maxSpawnDelay);
 
             // Tatsächlicher Abstand zufällig zwischen 100 ms und maxSpawnDelay
-            int delay = random.nextInt(100, maxSpawnDelay + 1);
+            int delay = random.nextInt(minSpawnDelay, maxSpawnDelay + 1);
 
             spawnTimer.setDelay(delay);
         });
@@ -895,10 +892,8 @@ public class GamePanel extends JPanel implements MouseListener {
                 }
 
 
-                if (projektilX > SPIEL_BREITE){
-                    projektiele.remove(p);
-                }
-                if (projektilY > SPIEL_HOEHE){
+                if (projektilX > SPIEL_BREITE || projektilX < 0 ||
+                        projektilY > SPIEL_HOEHE || projektilY < 0){
                     projektiele.remove(p);
                 }
 
@@ -935,6 +930,7 @@ public class GamePanel extends JPanel implements MouseListener {
         projektiele.clear();
         plaziertx.clear();
         plazierty.clear();
+        spawnQueue.clear();
 
         towers.clear();
         banks.clear();
@@ -1269,8 +1265,6 @@ public class GamePanel extends JPanel implements MouseListener {
                 doppelgeschwindigkeit = false;
             }
 
-            spawnDelay = 1000 / spielgeschwindigkeit;
-            minSpawnDelay = 100 / spielgeschwindigkeit;
 
             shootDelay = 500 / spielgeschwindigkeit;
 
