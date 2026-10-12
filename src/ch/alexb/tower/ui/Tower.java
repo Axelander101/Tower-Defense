@@ -76,7 +76,7 @@ public class Tower {
         switch (TowerTyp) {
             // Einfacher Turm
             case 1 -> {
-                reichweite = 140;
+                reichweite = 155;
                 demage = 1;
                 pearcing = 1;
 
@@ -86,12 +86,12 @@ public class Tower {
 
             // Sniper
             case 2 -> {
-                reichweite = 300;
+                reichweite = 260;
                 demage = 2;
                 pearcing = 1;
 
-                kosten = 150;
-                rueckerstattung += 75;
+                kosten = 200;
+                rueckerstattung += 100;
             }
 
             case 3 -> {
@@ -99,8 +99,8 @@ public class Tower {
                 demage = 3;
                 pearcing = 1;
 
-                kosten = 200;
-                rueckerstattung += 100;
+                kosten = 170;
+                rueckerstattung += 85;
             }
         }
     }
@@ -222,12 +222,20 @@ public class Tower {
 
 
     public int getDemageKosten(){
-        return (int) (100 * (1 + demageUpgradesGekauft * 0.5));
+        if (TowerTyp == 1) {
+            return 180 + 80 * getDemageUpgradesGekauft();
+        }else if (TowerTyp == 2){
+            return 160 + 70 * getDemageUpgradesGekauft();
+        } else if (TowerTyp == 3) {
+            return 160 + 75 * getDemageUpgradesGekauft();
+        }
+
+        return 0;
     }
 
 
     public int getPearcingKosten(){
-        return (int) (200 * (1 + pearcingUpgradesGekauft * 0.5));
+        return 260 + 160 * getPearcingUpgradesGekauft();
     }
 
     public int getPearcing(){

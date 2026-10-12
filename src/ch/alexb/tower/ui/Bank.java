@@ -10,12 +10,12 @@ public class Bank {
     private int x;
     private int y;
 
-    private int einkommen = 100;
+    private int einkommen = 35;
     private int moreMoneyUpgrades = 0;
     private int moreMoneyUpgradeKosten = 300;
-    private int rueckerstattung = 100;
+    private int rueckerstattung = 200;
 
-    private int kosten = 200;
+    private int kosten = 400;
 
 
 
@@ -77,7 +77,7 @@ public class Bank {
 
         if (moreMoneyUpgrades < 3){
             moreMoneyUpgrades += 1;
-            einkommen += 100;
+            einkommen += 35;
         }
     }
 

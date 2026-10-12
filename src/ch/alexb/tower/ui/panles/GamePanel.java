@@ -10,6 +10,8 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class GamePanel extends JPanel implements MouseListener {
 
@@ -26,7 +28,13 @@ public class GamePanel extends JPanel implements MouseListener {
     ArrayList<Integer> plaziertx = new ArrayList<>();
     ArrayList<Integer> plazierty = new ArrayList<>();
 
-    Object weitesterGegneraufStrecke = null;
+    private final Queue<Integer> spawnQueue = new ArrayDeque<>();
+
+    private static final int NORMAL = 1;
+    private static final int FAST = 2;
+    private static final int STRONG = 3;
+    private static final int BOSS = 4;
+
 
     UpgradePanel upgradePanel = new UpgradePanel();
     InGameMenuePanel inGameMenuePanel = new InGameMenuePanel();
@@ -180,6 +188,269 @@ public class GamePanel extends JPanel implements MouseListener {
         gameTimer.start();
     }
 
+
+    // Wellen vorbereiten
+    private int gegnerTypBestimmen(int aktuelleWelle) {
+
+        double r = random.nextDouble();
+
+
+        // Welle 1 - 4
+        if (aktuelleWelle < 5) {
+
+            return NORMAL;
+        }
+
+
+        // Welle 5 - 14
+        if (aktuelleWelle < 15) {
+
+            if (r < 0.70) {
+                return NORMAL;
+            } else {
+                return FAST;
+            }
+        }
+
+
+        // Welle 15 - 29
+        if (aktuelleWelle < 30) {
+
+            if (r < 0.50) {
+                return NORMAL;
+            }
+
+            if (r < 0.80) {
+                return FAST;
+            }
+
+            return STRONG;
+        }
+
+
+        // Welle 30 - 49
+        if (aktuelleWelle < 50) {
+
+            if (r < 0.40) {
+                return NORMAL;
+            }
+
+            if (r < 0.70) {
+                return FAST;
+            }
+
+            return STRONG;
+        }
+
+
+        // Welle 50 - 69
+        if (aktuelleWelle < 70) {
+
+            if (r < 0.30) {
+                return NORMAL;
+            }
+
+            if (r < 0.60) {
+                return FAST;
+            }
+
+            return STRONG;
+        }
+
+
+        // Ab Welle 70
+        if (r < 0.25) {
+            return NORMAL;
+        }
+
+        if (r < 0.55) {
+            return FAST;
+        }
+
+        return STRONG;
+    }
+
+    private void welleVorbereiten(int aktuelleWelle) {
+
+        spawnQueue.clear();
+
+        int gegnerAnzahl = Math.max(
+                1,
+                (int) Math.round(
+                        5
+                                + 1.25 * aktuelleWelle
+                                + 0.0045 * aktuelleWelle * aktuelleWelle
+                )
+        );
+
+
+        boolean bossWelle =
+                aktuelleWelle >= 20
+                        && aktuelleWelle % 10 == 0;
+
+
+        // Bei Bosswellen nur 45 % der normalen Gegner
+        if (bossWelle) {
+
+            int begleitGegner =
+                    (int) Math.round(gegnerAnzahl * 0.45);
+
+            // Boss hinzufügen
+            spawnQueue.add(BOSS);
+
+            // Begleitgegner
+            for (int i = 0; i < begleitGegner; i++) {
+
+                spawnQueue.add(
+                        gegnerTypBestimmen(aktuelleWelle)
+                );
+            }
+
+        } else {
+
+            // Normale Welle
+            for (int i = 0; i < gegnerAnzahl; i++) {
+
+                spawnQueue.add(
+                        gegnerTypBestimmen(aktuelleWelle)
+                );
+            }
+        }
+    }
+
+    private void gegnerSpawnen(int gegnerTyp) {
+
+        double hpFaktor = hpMultiplikator(welle);
+        double mapFaktor = mapHpFaktor();
+
+
+        switch (gegnerTyp) {
+
+            case NORMAL -> {
+
+                Enemy enemy = new Enemy(wegPunkte);
+
+                int leben = Math.max(
+                        1,
+                        (int) Math.round(
+                                4 * hpFaktor * mapFaktor
+                        )
+                );
+
+                enemy.setLeben(leben);
+
+                enemies.add(enemy);
+
+                gegnerAufBildschirm++;
+            }
+
+
+            case FAST -> {
+
+                FastEnemy enemy =
+                        new FastEnemy(wegPunkte);
+
+                int leben = Math.max(
+                        1,
+                        (int) Math.round(
+                                3 * hpFaktor * mapFaktor
+                        )
+                );
+
+                enemy.setLeben(leben);
+
+                fastEnemies.add(enemy);
+
+                gegnerAufBildschirm++;
+            }
+
+
+            case STRONG -> {
+
+                StrongEnemy enemy =
+                        new StrongEnemy(wegPunkte);
+
+                int leben = Math.max(
+                        1,
+                        (int) Math.round(
+                                10 * hpFaktor * mapFaktor
+                        )
+                );
+
+                enemy.setLeben(leben);
+
+                strongEnemies.add(enemy);
+
+                gegnerAufBildschirm++;
+            }
+
+
+            case BOSS -> {
+
+                Boss boss =
+                        new Boss(wegPunkte);
+
+                double bossFaktor;
+
+                if (map == 1) {
+                    bossFaktor = 0.65;
+                } else {
+                    bossFaktor = 0.56;
+                }
+
+
+                int leben = Math.max(
+                        1,
+                        (int) Math.round(
+                                (30 + welle * 2.5)
+                                        * hpFaktor
+                                        * mapFaktor
+                                        * bossFaktor
+                        )
+                );
+
+                boss.setLeben(leben);
+
+                bosses.add(boss);
+
+                gegnerAufBildschirm++;
+            }
+        }
+    }
+
+    private double hpMultiplikator(int aktuelleWelle) {
+
+        int x = aktuelleWelle - 1;
+
+
+        double basis =
+                1.0
+                        + x * 0.035
+                        + x * x * 0.0018;
+
+
+        double lateGame =
+                1.0
+                        + Math.max(
+                        0,
+                        aktuelleWelle - 40
+                ) * 0.011;
+
+
+        return basis * lateGame;
+    }
+
+    private double mapHpFaktor() {
+
+        if (map == 1) {
+            return 0.92;
+        }
+
+        return 1.07;
+    }
+
+
+    // Eigentliches Game
     public GamePanel(CardLayout cardLayout, JPanel hauptPanel) {
 
         this.cardLayout = cardLayout;
@@ -188,8 +459,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
         setLayout(null);
         shootLautstaerkeSlider.setVisible(false);
-
-        shootLautstaerkeSlider.setBounds(500, 220, 200, 50);
 
         add(shootLautstaerkeSlider);
 
@@ -207,8 +476,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
         setLayout(null);
         popLautstaerkeSlider.setVisible(false);
-
-        popLautstaerkeSlider.setBounds(500, 290, 200, 50);
 
         add(popLautstaerkeSlider);
 
@@ -230,105 +497,41 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Gegner spawnen
-        spawnTimer = new Timer(spawnDelay, e -> {
+        spawnTimer = new Timer(950, e -> {
+
+            // Neue Welle starten, wenn:
+            // 1. keine Gegner mehr leben
+            // 2. keine Gegner mehr auf das Spawnen warten
+            if (gegnerAufBildschirm == 0 && spawnQueue.isEmpty()) {
+
+                welle++;
+
+                welleVorbereiten(welle);
+
+                // Banken dürfen am Ende dieser neuen Welle wieder auszahlen
+                bankSchonGezahlt = false;
+            }
 
 
-            // Schnellere spawnrate nach jeder Runde
-            int delay = random.nextInt(minSpawnDelay, spawnDelay);
+            // Wenn noch Gegner gespawnt werden müssen
+            if (!spawnQueue.isEmpty()) {
+
+                int gegnerTyp = spawnQueue.poll();
+
+                gegnerSpawnen(gegnerTyp);
+            }
+
+
+            // Spawn-Geschwindigkeit für aktuelle Welle
+            int maxSpawnDelay = 950 - (welle - 1) * 6;
+
+            // Niemals schneller als max. 350 ms Obergrenze
+            maxSpawnDelay = Math.max(350, maxSpawnDelay);
+
+            // Tatsächlicher Abstand zufällig zwischen 100 ms und maxSpawnDelay
+            int delay = random.nextInt(100, maxSpawnDelay + 1);
 
             spawnTimer.setDelay(delay);
-
-            if (gegnerAufBildschirm == 0 && budget < 2){
-                // Schnellere spawnrate nach jeder Runde
-                spawnDelay -= welle * 3;
-
-                if (welle > 100){
-                    minSpawnDelay -= (welle -100) * 3;
-                }
-
-
-                // Gegner in den Runden bestimmen
-                welle += 1;
-                budget = welle * 10 * (1 + (double) welle / 10) * welle / 2;
-                if (welle == 0){
-                    welle = 1;
-                }
-            }
-
-            if (welle % 10 != 0  && welle < 5){
-                zahl = 1;
-            }
-
-            if ( welle % 10 != 0 && welle >= 5 && welle < 15 || welle == 10){
-
-                zahl = random.nextInt(1, 3);
-            }
-
-            if (welle % 10 != 0 && welle >= 15){
-                zahl = random.nextInt(1, 4);
-            }
-
-
-            // Boss jede 10. Welle
-            if (welle % 10 == 0 && budget > 0 && welle != 10){
-
-                Boss boss = new Boss(wegPunkte);
-
-                boss.setLeben(welle * 2);
-
-                budget = 0;
-                gegnerAufBildschirm += 1;
-                bosses.add(boss);
-                return;
-            }
-
-
-
-            switch (zahl){
-                case 1 -> {
-                    if (budget >= kostenNormal){
-
-                        budget -= kostenNormal;
-                        gegnerAufBildschirm += 1;
-
-                        Enemy enemy = new Enemy(wegPunkte);
-                        enemy.setLeben(4);
-
-                        enemies.add(enemy);
-                    }
-                }
-
-
-                case 2 -> {
-                    if (budget >= kostenSchnell){
-
-                        budget -= kostenSchnell;
-                        gegnerAufBildschirm += 1;
-
-                        FastEnemy fastenemy = new FastEnemy(wegPunkte);
-
-                        fastenemy.setLeben(3);
-                        fastEnemies.add(fastenemy);
-                    }
-                }
-
-
-                case 3 -> {
-
-                    if (budget >= kostenStark){
-
-                        budget -= kostenStark;
-                        gegnerAufBildschirm += 1;
-
-                        StrongEnemy strongEnemy = new StrongEnemy(wegPunkte);
-
-                        strongEnemy.setLeben(10);
-                        strongEnemies.add(strongEnemy);
-                    }
-                }
-            }
-
-            bankSchonGezahlt = false;
         });
 
 
@@ -516,8 +719,6 @@ public class GamePanel extends JPanel implements MouseListener {
                 int projektilX = (int) projektiel.getX();
                 int projektilY = (int) projektiel.getY();
 
-                int getroffen = 0;
-
 
                 // Normaler Gegner
                 for (int i = enemies.size() - 1; i >= 0; i--){
@@ -660,11 +861,11 @@ public class GamePanel extends JPanel implements MouseListener {
 
                             if (boss.getLeben() <= 0) {
                                 bosses.remove(i);
-                                geld += 100;
+                                geld += 100 + welle * 2;
                                 gegnerAufBildschirm -= 1;
 
                                 gegnerGetoetet += 1;
-                                totalGeld += 100;
+                                totalGeld += 100 + welle * 2;
                             }
 
                             projektiel.getroffen();
@@ -738,14 +939,24 @@ public class GamePanel extends JPanel implements MouseListener {
         double scaleY = getHeight() / (double) SPIEL_HOEHE;
 
 
+        shootLautstaerkeSlider.setBounds(
+                (int)(500 * scaleX),
+                (int)(220 * scaleY),
+                (int)(200 * scaleX),
+                (int)(50 * scaleY)
+        );
+
+        popLautstaerkeSlider.setBounds(
+                (int)(500 * scaleX),
+                (int)(290 * scaleY),
+                (int)(200 * scaleX),
+                (int)(50 * scaleY)
+        );
+
+
         Graphics2D g2 = (Graphics2D) g.create();
 
         g2.scale(scaleX, scaleY);
-
-
-        int wegY = WEG_Y;
-
-        int wegHoehe = 100;
 
 
         // Map zeichnen
@@ -914,8 +1125,8 @@ public class GamePanel extends JPanel implements MouseListener {
 
             // Kosten
             g2.drawString("50", 102, 685);
-            g2.drawString("100", 160, 685);
-            g2.drawString("100", 220, 685);
+            g2.drawString("200", 160, 685);
+            g2.drawString("170", 220, 685);
             g2.drawString("200", 280, 685);
 
             Color hellGrau = new Color(230, 230, 230);

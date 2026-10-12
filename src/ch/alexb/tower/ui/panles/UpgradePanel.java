@@ -48,7 +48,6 @@ public class UpgradePanel extends JPanel {
         g2.drawString(tower.getDemageUpgradesGekauft() + "/3  More demage", 730, 180);
         g2.drawString("+1 demage", 730, 200);
 
-
         if (tower.getDemageUpgradesGekauft() < 3){
             g2.drawString(tower.getDemageKosten() + " Coins", 730, 220);
 

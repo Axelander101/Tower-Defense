@@ -10,7 +10,7 @@ public class Enemy extends Gegner {
         x = wegPunkte.get(0).x;
         y = wegPunkte.get(0).y;
 
-        geschwindigkeit = 1.5;
+        geschwindigkeit = 2;
         leben = 1;
     }
 
