@@ -11,6 +11,8 @@ public class MapAuswaehlPanel extends JPanel {
 
     private MapSchwierigkeitPanel mapSchwierigkeitPanel;
 
+    private int ausgewähltemap;
+
 
     public MapAuswaehlPanel(CardLayout cardLayout, JPanel hauptPanel, MapSchwierigkeitPanel mapSchwierigkeitPanel){
 
@@ -21,7 +23,7 @@ public class MapAuswaehlPanel extends JPanel {
         this.mapSchwierigkeitPanel = mapSchwierigkeitPanel;
 
 
-        JButton map1Button = new JButton("Map 1 auswählen");
+        JButton map1Button = new JButton("Gerade auswählen");
 
         setLayout(null);
 
@@ -29,37 +31,48 @@ public class MapAuswaehlPanel extends JPanel {
 
         add(map1Button);
 
-        JButton map2Button = new JButton("Map 2 auswählen");
-
-        setLayout(null);
+        JButton map2Button = new JButton("Kurvenweg auswählen");
 
         map2Button.setBounds(180, 120, 150, 20);
 
         add(map2Button);
 
-        JButton map3Button = new JButton("Map 3 auswählen");
-
-        setLayout(null);
+        JButton map3Button = new JButton("U-Turn auswählen");
 
         map3Button.setBounds(350, 120, 150, 20);
 
         add(map3Button);
 
-        JButton map4Button = new JButton("Map 4 auswählen");
-
-        setLayout(null);
+        JButton map4Button = new JButton("S-Kurve auswählen");
 
         map4Button.setBounds(520, 120, 150, 20);
 
         add(map4Button);
 
-        JButton map5Button = new JButton("Map 5 auswählen");
-
-        setLayout(null);
+        JButton map5Button = new JButton("Serpentinen auswählen");
 
         map5Button.setBounds(690, 120, 150, 20);
 
         add(map5Button);
+
+        JButton map6Button = new JButton("Brücke auswählen");
+
+        map6Button.setBounds(10, 240, 150, 20);
+
+        add(map6Button);
+
+        JButton map7Button = new JButton("Spirale auswählen");
+
+        map7Button.setBounds(180, 240, 150, 20);
+
+        add(map7Button);
+
+        JButton map8Button = new JButton("Zickzack auswählen");
+
+        map8Button.setBounds(350, 240, 150, 20);
+
+        add(map8Button);
+
 
 
 
@@ -67,7 +80,7 @@ public class MapAuswaehlPanel extends JPanel {
 
             mapSchwierigkeitPanel.mapBestimmen(1);
 
-            cardLayout.show(hauptPanel, "maps");
+            cardLayout.show(hauptPanel, "schwirigkeit");
 
 
         });
@@ -76,7 +89,7 @@ public class MapAuswaehlPanel extends JPanel {
 
             mapSchwierigkeitPanel.mapBestimmen(2);
 
-            cardLayout.show(hauptPanel, "maps");
+            cardLayout.show(hauptPanel, "schwirigkeit");
 
         });
 
@@ -85,7 +98,7 @@ public class MapAuswaehlPanel extends JPanel {
 
             mapSchwierigkeitPanel.mapBestimmen(3);
 
-            cardLayout.show(hauptPanel, "maps");
+            cardLayout.show(hauptPanel, "schwirigkeit");
 
         });
 
@@ -93,7 +106,7 @@ public class MapAuswaehlPanel extends JPanel {
 
             mapSchwierigkeitPanel.mapBestimmen(4);
 
-            cardLayout.show(hauptPanel, "maps");
+            cardLayout.show(hauptPanel, "schwirigkeit");
 
         });
 
@@ -101,7 +114,31 @@ public class MapAuswaehlPanel extends JPanel {
 
             mapSchwierigkeitPanel.mapBestimmen(5);
 
-            cardLayout.show(hauptPanel, "maps");
+            cardLayout.show(hauptPanel, "schwirigkeit");
+
+        });
+
+        map6Button.addActionListener(e-> {
+
+            mapSchwierigkeitPanel.mapBestimmen(6);
+
+            cardLayout.show(hauptPanel, "schwirigkeit");
+
+        });
+
+        map7Button.addActionListener(e-> {
+
+            mapSchwierigkeitPanel.mapBestimmen(7);
+
+            cardLayout.show(hauptPanel, "schwirigkeit");
+
+        });
+
+        map8Button.addActionListener(e-> {
+
+            mapSchwierigkeitPanel.mapBestimmen(8);
+
+            cardLayout.show(hauptPanel, "schwirigkeit");
 
         });
 

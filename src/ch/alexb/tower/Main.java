@@ -28,7 +28,7 @@ public class Main {
         hauptPanel.add(mapAuswaehlPanel, "menu");
         hauptPanel.add(gamePanel, "game");
 
-        hauptPanel.add(mapSchwierigkeitPanel, "maps");
+        hauptPanel.add(mapSchwierigkeitPanel, "schwirigkeit");
 
 
 

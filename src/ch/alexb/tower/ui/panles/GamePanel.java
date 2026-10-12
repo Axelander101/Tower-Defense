@@ -186,9 +186,73 @@ public class GamePanel extends JPanel implements MouseListener {
             wegPunkte.add(new Point(900, 470));
             wegPunkte.add(new Point(0, 470));
 
-        }else if(map == 4){
+        }else if(map == 4){   // S-Kurve
 
+            wegPunkte.add(new Point(0, 180));
+            wegPunkte.add(new Point(150, 150));
+            wegPunkte.add(new Point(300, 170));
+            wegPunkte.add(new Point(420, 250));
+            wegPunkte.add(new Point(500, 350));
+            wegPunkte.add(new Point(580, 450));
+            wegPunkte.add(new Point(700, 520));
+            wegPunkte.add(new Point(850, 500));
+            wegPunkte.add(new Point(1000, 420));
+
+            geld = 100;
+
+        }else if(map == 5){   // Serpentinen
+
+            wegPunkte.add(new Point(0, 120));
+            wegPunkte.add(new Point(850, 120));
+            wegPunkte.add(new Point(850, 290));
+            wegPunkte.add(new Point(150, 290));
+            wegPunkte.add(new Point(150, 480));
+            wegPunkte.add(new Point(850, 480));
+            wegPunkte.add(new Point(850, 650));
+            wegPunkte.add(new Point(0, 650));
+
+
+            geld = 100;
+
+        }else if(map == 6){   // Brücke
+
+            wegPunkte.add(new Point(0, 180));
+            wegPunkte.add(new Point(800, 180));
+            wegPunkte.add(new Point(800, 600));
+            wegPunkte.add(new Point(200, 600));
+            wegPunkte.add(new Point(200, 350));
+            wegPunkte.add(new Point(1000, 350));
+
+            geld = 100;
+
+        }else if(map == 7){   // Spirale
+
+            wegPunkte.add(new Point(0, 100));
+            wegPunkte.add(new Point(900, 100));
+            wegPunkte.add(new Point(900, 630));
+            wegPunkte.add(new Point(100, 630));
+            wegPunkte.add(new Point(100, 270));
+            wegPunkte.add(new Point(720, 270));
+            wegPunkte.add(new Point(720, 450));
+            wegPunkte.add(new Point(0, 450));
+
+            geld = 100;
+
+        }else if(map == 8){   // Zickzack
+
+            wegPunkte.add(new Point(0, 100));
+            wegPunkte.add(new Point(250, 200));
+            wegPunkte.add(new Point(100, 300));
+            wegPunkte.add(new Point(400, 400));
+            wegPunkte.add(new Point(250, 500));
+            wegPunkte.add(new Point(600, 600));
+            wegPunkte.add(new Point(750, 450));
+            wegPunkte.add(new Point(600, 300));
+            wegPunkte.add(new Point(850, 180));
+            wegPunkte.add(new Point(1000, 250));
+            geld = 100;
         }
+
 
         spawnTimer.start();
         schiessenTimer.start();
@@ -969,7 +1033,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Map zeichnen
-        if (map == 1){
+        if (map == 1 || map == 4){
             setBackground(Color.GREEN);
         }else if(map == 2){
             setBackground(Color.YELLOW);
@@ -977,18 +1041,71 @@ public class GamePanel extends JPanel implements MouseListener {
             setBackground(Color.lightGray);
         }
 
-        g2.setStroke(new BasicStroke(100, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        Path2D.Double weg = new Path2D.Double();
+        if (map != 4) {
+
+            Point start = wegPunkte.get(0);
+
+            weg.moveTo(start.x, start.y);
+
+            for (int i = 1; i < wegPunkte.size(); i++) {
+
+                Point punkt = wegPunkte.get(i);
+
+                weg.lineTo(punkt.x, punkt.y);
+            }
+        }
+
+        if (map == 4){
+
+            Point start = wegPunkte.get(0);
+            weg.moveTo(start.x, start.y);
+
+            for (int i = 1; i < wegPunkte.size() - 1; i++) {
+
+                Point kontrollPunkt = wegPunkte.get(i);
+                Point naechsterPunkt = wegPunkte.get(i + 1);
+
+                double mittelX =
+                        (kontrollPunkt.x + naechsterPunkt.x) / 2.0;
+
+                double mittelY =
+                        (kontrollPunkt.y + naechsterPunkt.y) / 2.0;
+
+                weg.quadTo(
+                        kontrollPunkt.x,
+                        kontrollPunkt.y,
+                        mittelX,
+                        mittelY
+                );
+            }
+
+            Point letzterPunkt =
+                    wegPunkte.get(wegPunkte.size() - 1);
+
+            weg.lineTo(
+                    letzterPunkt.x,
+                    letzterPunkt.y
+            );
+
+            g2.setStroke(new BasicStroke(
+                    100,
+                    BasicStroke.CAP_ROUND,
+                    BasicStroke.JOIN_ROUND
+            ));
+
+            g2.draw(weg);
+        }
 
         g2.setColor(Color.GRAY);
 
+        g2.setStroke(new BasicStroke(
+                100,
+                BasicStroke.CAP_ROUND,
+                BasicStroke.JOIN_ROUND
+        ));
 
-        for (int i = 0; i < wegPunkte.size() - 1; i++) {
-
-            Point punkt1 = wegPunkte.get(i);
-            Point punkt2 = wegPunkte.get(i + 1);
-
-            g2.drawLine(punkt1.x, punkt1.y, punkt2.x, punkt2.y);
-        }
+        g2.draw(weg);
 
         g2.setStroke(new BasicStroke(1));
 
