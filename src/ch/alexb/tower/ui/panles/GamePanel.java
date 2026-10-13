@@ -5,8 +5,7 @@ import ch.alexb.tower.ui.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,7 +13,9 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.awt.geom.Path2D;
 
-public class GamePanel extends JPanel implements MouseListener {
+public class GamePanel extends JPanel
+        implements MouseListener, MouseMotionListener, MouseWheelListener {
+
 
     ArrayList<Point> wegPunkte = new ArrayList<>();
 
@@ -37,6 +38,11 @@ public class GamePanel extends JPanel implements MouseListener {
     private static final int BOSS = 4;
 
 
+    private int turmScrollOffset = 0;
+    private final int TURM_BREITE = 60;
+    private final int ANZAHL_TUERME = 10;
+
+
     UpgradePanel upgradePanel = new UpgradePanel();
     InGameMenuePanel inGameMenuePanel = new InGameMenuePanel();
 
@@ -53,7 +59,7 @@ public class GamePanel extends JPanel implements MouseListener {
     JSlider popLautstaerkeSlider = new JSlider(0, 100, 50);
 
     int leben = 20;
-    int geld = 100;
+    int geld = 100000;
 
 
     boolean gameOver = false;
@@ -72,10 +78,6 @@ public class GamePanel extends JPanel implements MouseListener {
     int gegnerGetoetet = 0;
     int totalGeld = 100;
     int map;
-
-    int kostenNormal = 2;
-    int kostenSchnell = 3;
-    int kostenStark = 5;
 
     double budget = 0;
 
@@ -167,91 +169,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
         wegPunkte.clear();
 
-        if (map == 1){
-            wegPunkte.add(new Point(0, 350));
-            wegPunkte.add(new Point(1000, 350));
-            geld = 100;
-        }else if (map == 2){
-            wegPunkte.add(new Point(0, 350));
-            wegPunkte.add(new Point(250, 350));
-            wegPunkte.add(new Point(250, 500));
-            wegPunkte.add(new Point(600, 500));
-            wegPunkte.add(new Point(600, 200));
-            wegPunkte.add(new Point(1000, 200));
-
-            geld = 100;
-        }else if (map == 3){
-            wegPunkte.add(new Point(0, 230));
-            wegPunkte.add(new Point(900, 230));
-            wegPunkte.add(new Point(900, 470));
-            wegPunkte.add(new Point(0, 470));
-
-        }else if(map == 4){   // S-Kurve
-
-            wegPunkte.add(new Point(0, 180));
-            wegPunkte.add(new Point(150, 150));
-            wegPunkte.add(new Point(300, 170));
-            wegPunkte.add(new Point(420, 250));
-            wegPunkte.add(new Point(500, 350));
-            wegPunkte.add(new Point(580, 450));
-            wegPunkte.add(new Point(700, 520));
-            wegPunkte.add(new Point(850, 500));
-            wegPunkte.add(new Point(1000, 420));
-
-            geld = 100;
-
-        }else if(map == 5){   // Serpentinen
-
-            wegPunkte.add(new Point(0, 120));
-            wegPunkte.add(new Point(850, 120));
-            wegPunkte.add(new Point(850, 290));
-            wegPunkte.add(new Point(150, 290));
-            wegPunkte.add(new Point(150, 480));
-            wegPunkte.add(new Point(850, 480));
-            wegPunkte.add(new Point(850, 650));
-            wegPunkte.add(new Point(0, 650));
-
-
-            geld = 100;
-
-        }else if(map == 6){   // Brücke
-
-            wegPunkte.add(new Point(0, 180));
-            wegPunkte.add(new Point(800, 180));
-            wegPunkte.add(new Point(800, 600));
-            wegPunkte.add(new Point(200, 600));
-            wegPunkte.add(new Point(200, 350));
-            wegPunkte.add(new Point(1000, 350));
-
-            geld = 100;
-
-        }else if(map == 7){   // Spirale
-
-            wegPunkte.add(new Point(0, 100));
-            wegPunkte.add(new Point(900, 100));
-            wegPunkte.add(new Point(900, 630));
-            wegPunkte.add(new Point(100, 630));
-            wegPunkte.add(new Point(100, 270));
-            wegPunkte.add(new Point(720, 270));
-            wegPunkte.add(new Point(720, 450));
-            wegPunkte.add(new Point(0, 450));
-
-            geld = 100;
-
-        }else if(map == 8){   // Zickzack
-
-            wegPunkte.add(new Point(0, 100));
-            wegPunkte.add(new Point(250, 200));
-            wegPunkte.add(new Point(100, 300));
-            wegPunkte.add(new Point(400, 400));
-            wegPunkte.add(new Point(250, 500));
-            wegPunkte.add(new Point(600, 600));
-            wegPunkte.add(new Point(750, 450));
-            wegPunkte.add(new Point(600, 300));
-            wegPunkte.add(new Point(850, 180));
-            wegPunkte.add(new Point(1000, 250));
-            geld = 100;
-        }
+        wegPunkte = MapDaten.getWegPunkte(map);
 
 
         spawnTimer.start();
@@ -564,6 +482,8 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         addMouseListener(this);
+        addMouseMotionListener(this);
+        addMouseWheelListener(this);
 
 
         // Gegner spawnen
@@ -608,9 +528,7 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Tower schießen
-        schiessenTimer = new Timer(shootDelay, e -> {
-
-            schiessenTimer.setDelay(shootDelay);
+        schiessenTimer = new Timer(50, e -> {
 
 
             ArrayList<Gegner> alleGegner = new ArrayList<>();
@@ -622,6 +540,10 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
             for (Tower tower : towers){
+
+                if (tower.getShootdelay() <= 0 || !tower.kannSchiessen()){
+                    continue;
+                }
 
                 int towerX = tower.getMousex();
                 int towerY = tower.getMousey();
@@ -689,6 +611,8 @@ public class GamePanel extends JPanel implements MouseListener {
                     projektiele.add(projektiel);
 
                     Sound.abspielen("sounds/shoot.wav", shootLautstaerke);
+
+                    tower.schussGemacht();
                 }
             }
         });
@@ -1033,12 +957,16 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Map zeichnen
-        if (map == 1 || map == 4){
+        Color matschBraun = new Color(205, 133, 63);
+
+        if (map == 1 || map == 5) {
             setBackground(Color.GREEN);
-        }else if(map == 2){
+        }else if (map == 2 || map == 7){
             setBackground(Color.YELLOW);
-        }else if(map == 3){
+        }else if ( map == 3 || map == 8){
             setBackground(Color.lightGray);
+        }else if (map == 6 || map == 4){
+            setBackground(matschBraun);
         }
 
         Path2D.Double weg = new Path2D.Double();
@@ -1239,68 +1167,137 @@ public class GamePanel extends JPanel implements MouseListener {
 
         //  Turmmenue anzeigen
         if (!turmMenueOffen) {
+
             g2.setFont(new Font("Arial", Font.PLAIN, 50));
             g2.setColor(Color.BLACK);
+
             g2.drawRect(10, 640, 50, 50);
             g2.drawString("➡", 15, 682);
+
         } else {
+
             g2.setFont(new Font("Arial", Font.PLAIN, 40));
             g2.setColor(Color.BLACK);
+
             g2.drawRect(10, 640, 50, 50);
             g2.drawString("⬅", 15, 682);
 
-            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            // Rahmen des Menüs
             g2.drawRect(70, 620, 400, 70);
 
-            // Kosten
-            g2.drawString("50", 102, 685);
-            g2.drawString("200", 160, 685);
-            g2.drawString("170", 220, 685);
-            g2.drawString("200", 280, 685);
+            int startX = 80 - turmScrollOffset;
 
             Color hellGrau = new Color(230, 230, 230);
-            // Einfacher Turm
-            if (typ == 1) {
-                g2.setColor(hellGrau);
-                g2.fillRect(80, 620, 60, 70);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+
+
+
+            Shape alterClip = g2.getClip();
+
+            g2.setClip(70, 620, 400, 70);
+
+
+            for (int i = 0; i < ANZAHL_TUERME; i++) {
+
+                int typNummer = i + 1;
+                int x = startX + i * TURM_BREITE;
+
+                // Nur zeichnen, wenn der Turm innerhalb des Menüs liegt
+                if (x + 60 < 70 || x > 420) {
+                    continue;
+                }
+
+                // ausgewählter Turm
+                if (typ == typNummer) {
+                    g2.setColor(hellGrau);
+                    g2.fillRect(x, 620, 60, 70);
+                }
+
+                switch (typNummer) {
+
+                    //Normaler Turm
+                    case 1 -> {
+                        g2.setColor(Color.GRAY);
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("50", x + 22, 685);
+                    }
+                    //Sniper
+                    case 2 -> {
+                        g2.setColor(new Color(0, 100, 0));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("150", x + 18, 685);
+                    }
+                    //Shotgun
+                    case 3 -> {
+                        g2.setColor(Color.RED);
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("170", x + 18, 685);
+                    }
+                    //Frost
+                    case 4 -> {
+                        g2.setColor(new Color(200, 233, 245));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("90", x + 18, 685);
+                    }
+                    //Detektor
+                    case 5 -> {
+                        g2.setColor(new Color(100,104,60));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("125", x + 22, 685);
+                    }
+                    //Bomber
+                    case 6 -> {
+                        g2.setColor(new Color(74, 70, 70));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("255", x + 18, 685);
+                    }
+                    //Mörser
+                    case 7 -> {
+                        g2.setColor(new Color(213, 29, 125));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("390", x + 18, 685);
+                    }
+                    //Fallenleger
+                    case 8 -> {
+                        g2.setColor(new Color(245, 187, 13));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("190", x + 18, 685);
+                    }
+                    //Dorf
+                    case 9 -> {
+                        g2.setColor(new Color(153, 153, 153));
+                        g2.fillOval(x + 10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("505", x + 18, 685);
+                    }
+                    case 10 -> {
+                        g2.setColor(new Color(139, 69, 19));
+                        g2.fillRect(x+10, 630, 40, 40);
+
+                        g2.setColor(Color.BLACK);
+                        g2.drawString("190", x + 18, 685);
+                    }
+                }
+                g2.setClip(alterClip);
             }
-            g2.setColor(Color.GRAY);
-            g2.fillOval(90, 630, 40, 40);
-
-            // Sniper
-            if (typ == 2) {
-                g2.setColor(hellGrau);
-                g2.fillRect(140, 620, 60, 70);
-            }
-            Color darkGreen = new Color(0, 100, 0);
-            g2.setColor(darkGreen);
-            g2.fillOval(150, 630, 40, 40);
-
-            // Shotgun
-            if (typ == 3) {
-                g2.setColor(hellGrau);
-                g2.fillRect(200, 620, 60, 70);
-            }
-            g2.setColor(Color.RED);
-            g2.fillOval(210, 630, 40, 40);
-
-            // Bank
-            if (typ == 4) {
-                g2.setColor(hellGrau);
-                g2.fillRect(260, 620, 60, 70);
-            }
-            Color brown = new Color(139, 69, 19);
-            g2.setColor(brown);
-            g2.fillRect(270, 630, 40, 40);
-
-
-            // Kosten
-            g2.setColor(Color.BLACK);
-            g2.drawString("50", 102, 685);
-            g2.drawString("100", 160, 685);
-            g2.drawString("100", 220, 685);
-            g2.drawString("200", 280, 685);
-
         }
 
 
@@ -1348,7 +1345,7 @@ public class GamePanel extends JPanel implements MouseListener {
                 repaint();
             }
 
-            if (spielMunueOffen && mousex > 420 && mousex < 490 && mousey > 350 && mousey < 410){
+            if (spielMunueOffen && mousex > 555 && mousex < 625 && mousey > 350 && mousey < 410){
                 gameOver = false;
                 spielMunueOffen = false;
 
@@ -1366,6 +1363,10 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
                 repaint();
+            }
+
+            if (spielMunueOffen && mousex > 390 && mousex < 460 && mousey > 350 && mousey < 410){
+                cardLayout.show(hauptPanel ,"menu");
             }
         }
 
@@ -1390,7 +1391,6 @@ public class GamePanel extends JPanel implements MouseListener {
 
         }
 
-
         // Turmmenue öffnen
         if (mousex > 10 && mousex < 60 && mousey > 640 && mousey < 690){
             turmMenueOffen = !turmMenueOffen;
@@ -1399,15 +1399,22 @@ public class GamePanel extends JPanel implements MouseListener {
 
 
         // Turm auswählen
-        if (turmMenueOffen){
-            if (mousex > 90 && mousex < 130 && mousey > 620 && mousey < 690){
-                typ = 1;
-            }else if(mousex > 150 && mousex < 190 && mousey > 620 && mousey < 690){
-                typ = 2;
-            }else if(mousex > 210 && mousex < 250 && mousey > 620 && mousey < 690){
-                typ = 3;
-            }else if(mousex > 270 && mousex < 310 && mousey > 620 && mousey < 690){
-                typ = 4;
+        if (turmMenueOffen) {
+
+            int startX = 80 - turmScrollOffset;
+
+            for (int i = 0; i < ANZAHL_TUERME; i++) {
+
+                int x = startX + i * TURM_BREITE;
+
+                if (mousex >= x &&
+                        mousex <= x + 60 &&
+                        mousey >= 620 &&
+                        mousey <= 690) {
+
+                    typ = i + 1;
+                    break;
+                }
             }
         }
 
@@ -1676,14 +1683,14 @@ public class GamePanel extends JPanel implements MouseListener {
         Tower tower = new Tower();
         if (geld >= tower.getKosten(typ)){
 
-            if (!einstellungenOffen && !turmMenueOffen){
+            if (!einstellungenOffen && !turmMenueOffen && !spielMunueOffen){
                 if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700){
                     if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
                         if (!istAufWeg(mousex, mousey)){
                             if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
                                     bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                                if (typ <= 3) {
+                                if (typ <= 9) {
                                     tower.newTower(mousex, mousey, typ);
                                     geld -= tower.getKosten(typ);
 
@@ -1706,7 +1713,7 @@ public class GamePanel extends JPanel implements MouseListener {
         // Neu Bank plazieren
         if (geld >= bank.getKosten()) {
 
-            if (!einstellungenOffen && !turmMenueOffen) {
+            if (!einstellungenOffen && !turmMenueOffen && !spielMunueOffen) {
                 if (mousex < 930 || mousex > 1000 || mousey < 630 || mousey > 700) {
                     if (mousex < 0 || mousex > 60 || mousey < 640 || mousey > 700) {
                         if (mousey + 30 <= WEG_Y || mousey - 30 >= WEG_Y + 100) {
@@ -1715,7 +1722,7 @@ public class GamePanel extends JPanel implements MouseListener {
                                 if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
                                         bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                                    if (typ == 4) {
+                                    if (typ == 10) {
                                         bank.newBank(mousex, mousey);
 
                                         geld -= bank.getKosten();
@@ -1759,6 +1766,45 @@ public class GamePanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e){
+
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+
+        if (!turmMenueOffen) {
+            return;
+        }
+
+        int rotation = e.getWheelRotation();
+
+        turmScrollOffset += rotation * 40;
+
+        int menuBreite = 400;
+
+        int maxScroll = Math.max(
+                0,
+                ANZAHL_TUERME * TURM_BREITE - menuBreite
+        );
+
+        if (turmScrollOffset < 0) {
+            turmScrollOffset = 0;
+        }
+
+        if (turmScrollOffset > maxScroll) {
+            turmScrollOffset = maxScroll;
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
 
     }
 }

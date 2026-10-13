@@ -15,6 +15,8 @@ public class Tower {
     private int reichweite;
     private int demage;
     private int pearcing;
+    private int shootdelay;
+    private boolean flaechenschaden;
 
     private int reachUpgradesGekauft = 0;
     private int demageUpgradesGekauft = 0;
@@ -28,26 +30,74 @@ public class Tower {
 
     private boolean typSchonBestimmt = false;
 
+    private long letzterSchuss = 0;
+
+
+
+    public boolean kannSchiessen() {
+
+        long aktuelleZeit = System.currentTimeMillis();
+
+        return aktuelleZeit - letzterSchuss >= shootdelay;
+    }
+
+    public void schussGemacht() {
+        letzterSchuss = System.currentTimeMillis();
+    }
+
 
     public void towerzeichnen(Graphics g2){
+        boolean oval = true;
 
         switch (TowerTyp) {
+            //Einfacher Turm
             case 1 -> {
-
                 g2.setColor(Color.GRAY);
-                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
             }
-
+            //Sniper
             case 2 -> {
                 Color darkGreen= new Color(0, 100, 0);
                 g2.setColor(darkGreen);
-                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
             }
-
+            //Shotgun
             case 3 -> {
                 g2.setColor(Color.RED);
-                g2.fillOval(mousex - 30, mousey - 30, 60, 60);
             }
+            //Frost
+            case 4 -> {
+                Color eisblau = new Color(200, 233, 245);
+                g2.setColor(eisblau);
+            }
+            //Detektor
+            case 5 -> {
+                Color dreckgruen = new Color(100,104,60);
+                g2.setColor(dreckgruen);
+            }
+            //Bomber
+            case 6 -> {
+                Color dunkelGrau = new Color(74, 70, 70);
+                g2.setColor(dunkelGrau);
+            }
+            //Mörser
+            case 7 -> {
+                Color pink = new Color(213, 29, 125);
+                g2.setColor(pink);
+            }
+            //Fallenleger
+            case 8 -> {
+                Color dunkelGelb = new Color(245, 187, 13);
+                g2.setColor(dunkelGelb);
+            }
+            //Dorf
+            case 9 -> {
+                Color hellGrau = new Color(153, 153, 153);
+                g2.setColor(hellGrau);
+                g2.fillRect(mousex - 30, mousey - 30, 60, 60);
+                oval = false;
+            }
+        }
+        if (oval){
+            g2.fillOval(mousex - 30, mousey - 30, 60, 60);
         }
     }
 
@@ -74,34 +124,107 @@ public class Tower {
         }
 
         switch (TowerTyp) {
-            // Einfacher Turm
+            //Einfacher Turm
             case 1 -> {
                 reichweite = 155;
                 demage = 1;
                 pearcing = 1;
+                shootdelay = 500;
+                flaechenschaden = false;
 
                 kosten = 50;
                 rueckerstattung += 25;
             }
 
-            // Sniper
+            //Sniper
             case 2 -> {
                 reichweite = 260;
                 demage = 2;
                 pearcing = 1;
+                shootdelay = 500;
+                flaechenschaden = false;
 
-                kosten = 200;
+                kosten = 150;
                 rueckerstattung += 100;
             }
-
+            //Shotgun
             case 3 -> {
                 reichweite = 140;
                 demage = 3;
                 pearcing = 1;
+                shootdelay = 500;
+                flaechenschaden = false;
 
                 kosten = 170;
                 rueckerstattung += 85;
             }
+            //Frost
+            case 4 -> {
+                reichweite = 165;
+                demage = 1;
+                pearcing = 1;
+                shootdelay = 700;
+                flaechenschaden = false;
+
+                kosten = 90;
+                rueckerstattung = 45;
+            }
+            //Detektor
+            case 5 -> {
+                reichweite = 195;
+                demage = 2;
+                pearcing = 1;
+                shootdelay = 500;
+                flaechenschaden = false;
+
+                kosten = 125;
+                rueckerstattung = 62;
+            }
+            //Bomber
+            case 6 -> {
+                reichweite = 175;
+                demage = 4;
+                pearcing = 2;
+                shootdelay = 900;
+                flaechenschaden = true;
+
+                kosten = 255;
+                rueckerstattung = 127;
+            }
+            //Mörser
+            case 7 -> {
+                reichweite = 360;
+                demage = 8;
+                pearcing = 1;
+                shootdelay = 1800;
+                flaechenschaden = true;
+
+                kosten = 390;
+                rueckerstattung = 195;
+            }
+            //Fallenleger
+            case 8 -> {
+                reichweite = 200;
+                demage = 6;
+                pearcing = 1;
+                shootdelay = 1000;
+                flaechenschaden = false;
+
+                kosten = 190;
+                rueckerstattung = 95;
+            }
+            //Dorf
+            case 9 -> {
+                reichweite = 220;
+                demage = 0;
+                pearcing = 0;
+                shootdelay = 1;
+                flaechenschaden = false;
+
+                kosten = 505;
+                rueckerstattung = 252;
+            }
+
         }
     }
 
@@ -245,15 +368,44 @@ public class Tower {
     public int getKosten(int typ){
 
         switch (typ){
+
+            //Normal
             case 1 -> {
                 kosten = 50;
             }
+            //Sniper
             case 2 -> {
                 kosten = 150;
             }
+            //Shotgun
             case 3 -> {
-                kosten = 200;
+                kosten = 170;
             }
+            //Frost
+            case 4 -> {
+                kosten = 90;
+            }
+            //Detektor
+            case 5 -> {
+                kosten = 125;
+            }
+            //Bomber
+            case 6 -> {
+                kosten = 255;
+            }
+            //Mörser
+            case 7 -> {
+                kosten = 390;
+            }
+            //Fallenleger
+            case 8 -> {
+                kosten = 190;
+            }
+            //Dorf
+            case 9 -> {
+                kosten = 505;
+            }
+
         }
 
         return kosten;
@@ -263,5 +415,10 @@ public class Tower {
     public int getDemage(){
         return demage;
     }
+
+    public int getShootdelay(){
+        return shootdelay;
+    }
+
 
 }
