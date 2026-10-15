@@ -548,7 +548,9 @@ public class GamePanel extends JPanel
 
             for (Tower tower : towers){
 
-                if (tower.getShootdelay() <= 0 || !tower.kannSchiessen()){
+                int effektiverDelay = tower.getEffektiverShootdelay(towers);
+
+                if (effektiverDelay <= 0 || !tower.kannSchiessen(effektiverDelay)) {
                     continue;
                 }
 
@@ -764,7 +766,7 @@ public class GamePanel extends JPanel
                                     enemy.slow(2000);
                                 }
 
-                                enemy.schadenNehmen(projektiel.getTower().getDemage());
+                                enemy.schadenNehmen((int) projektiel.getTower().getEffektiverSchaden(towers));
 
                                 Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -810,7 +812,7 @@ public class GamePanel extends JPanel
                                     fastEnemy.slow(2000);
                                 }
 
-                                fastEnemy.schadenNehmen(projektiel.getTower().getDemage());
+                                fastEnemy.schadenNehmen((int) projektiel.getTower().getEffektiverSchaden(towers));
 
                                 Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -853,7 +855,7 @@ public class GamePanel extends JPanel
                                     strongEnemy.slow(2000);
                                 }
 
-                                strongEnemy.schadenNehmen(projektiel.getTower().getDemage());
+                                strongEnemy.schadenNehmen((int) projektiel.getTower().getEffektiverSchaden(towers));
 
                                 Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
@@ -898,7 +900,7 @@ public class GamePanel extends JPanel
                                     boss.slow(2000);
                                 }
 
-                                boss.schadenNehmen(projektiel.getTower().getDemage());
+                                boss.schadenNehmen((int) projektiel.getTower().getEffektiverSchaden(towers));
 
                                 Sound.abspielen("sounds/pop.wav", popLautstaerke);
 

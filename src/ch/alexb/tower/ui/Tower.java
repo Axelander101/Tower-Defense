@@ -34,11 +34,11 @@ public class Tower {
 
 
 
-    public boolean kannSchiessen() {
+    public boolean kannSchiessen(int delay) {
 
         long aktuelleZeit = System.currentTimeMillis();
 
-        return aktuelleZeit - letzterSchuss >= shootdelay;
+        return aktuelleZeit - letzterSchuss >= delay;
     }
 
     public void schussGemacht() {
@@ -226,6 +226,64 @@ public class Tower {
             }
 
         }
+    }
+
+    public double getEffektiverSchaden(ArrayList<Tower> towers) {
+
+        double schaden = demage;
+
+        for (Tower tower : towers) {
+
+            if (tower.getTowerTyp() != 9) {
+                continue;
+            }
+
+            double dx = tower.getMousex() - this.mousex;
+            double dy = tower.getMousey() - this.mousey;
+
+            double entfernung = Math.sqrt(dx * dx + dy * dy);
+
+            if (entfernung <= tower.getReichweite()) {
+
+                /*
+                if (tower.isDorfSchadenUpgrade()) {
+                    schaden *= 1.15;
+                }
+                */
+            }
+        }
+
+        return schaden;
+    }
+
+    public int getEffektiverShootdelay(ArrayList<Tower> towers) {
+
+        double faktor = 1.0;
+
+        for (Tower tower : towers) {
+
+            if (tower.getTowerTyp() != 9) {
+                continue;
+            }
+
+            double dx = tower.getMousex() - this.mousex;
+            double dy = tower.getMousey() - this.mousey;
+
+            double entfernung = Math.sqrt(dx * dx + dy * dy);
+
+            if (entfernung <= tower.getReichweite()) {
+
+                faktor = 0.2; // Grundbuff +8 %
+
+                /*
+                if (tower.isDorfFeuerrateUpgrade()) {
+                    faktor = 0.80; // insgesamt etwa +20 %
+                }
+                */
+            }
+        }
+
+        return (int) (shootdelay * faktor);
     }
 
 
