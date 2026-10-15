@@ -89,6 +89,11 @@ public class GamePanel extends JPanel
 
     int typ = 1;
 
+    int moerserZielX;
+    int moerserZielY;
+    int fallenlegerZielX;
+    int fallenlegerZielY;
+
 
     int spielgeschwindigkeit = 1;
 
@@ -500,6 +505,8 @@ public class GamePanel extends JPanel
 
                 // Banken dürfen am Ende dieser neuen Welle wieder auszahlen
                 bankSchonGezahlt = false;
+                //Alle falen löschen
+                projektiele.clear();
 
             }
 
@@ -548,6 +555,7 @@ public class GamePanel extends JPanel
                 int towerX = tower.getMousex();
                 int towerY = tower.getMousey();
 
+
                 Gegner zielEnemy = null;
 
                 int weitesterWegPunkt = -1;
@@ -557,34 +565,34 @@ public class GamePanel extends JPanel
 
                 for (Gegner gegner : alleGegner){
 
-                    if (tower.istInReichweite(towerX, towerY, gegner.getX(), gegner.getY())){
+                    if (tower.getTowerTyp() != 7 && tower.getTowerTyp() != 8){
+                        if (tower.istInReichweite(towerX, towerY, gegner.getX(), gegner.getY())) {
 
-                        int wegPunkt = gegner.getAktuellerWegPunkt();
-
-
-                        if (wegPunkt > weitesterWegPunkt){
-
-                            zielEnemy = gegner;
-
-                            weitesterWegPunkt = wegPunkt;
-
-                            kleinsterAbstand = abstandZumNaechstenWegPunkt(gegner);
-                        }
+                            int wegPunkt = gegner.getAktuellerWegPunkt();
 
 
-                        else if (wegPunkt == weitesterWegPunkt){
-
-                            double abstand = abstandZumNaechstenWegPunkt(gegner);
-
-
-                            if (abstand < kleinsterAbstand){
+                            if (wegPunkt > weitesterWegPunkt) {
 
                                 zielEnemy = gegner;
 
-                                kleinsterAbstand = abstand;
+                                weitesterWegPunkt = wegPunkt;
+
+                                kleinsterAbstand = abstandZumNaechstenWegPunkt(gegner);
+                            } else if (wegPunkt == weitesterWegPunkt) {
+
+                                double abstand = abstandZumNaechstenWegPunkt(gegner);
+
+
+                                if (abstand < kleinsterAbstand) {
+
+                                    zielEnemy = gegner;
+
+                                    kleinsterAbstand = abstand;
+                                }
                             }
                         }
                     }
+
                 }
 
 
@@ -614,6 +622,19 @@ public class GamePanel extends JPanel
 
                     tower.schussGemacht();
                 }
+
+                if (tower.getTowerTyp() == 7){
+                    Projektiel projektiel = new Projektiel(towerX, towerY, moerserZielX, moerserZielY, tower);
+                    tower.schussGemacht();
+                    projektiele.add(projektiel);
+
+                } else if (tower.getTowerTyp() == 8) {
+                    Projektiel projektiel = new Projektiel(towerX, towerY, fallenlegerZielX, fallenlegerZielX, tower);
+                    tower.schussGemacht();
+                    projektiele.add(projektiel);
+                }
+
+
             }
         });
 
@@ -705,7 +726,13 @@ public class GamePanel extends JPanel
 
             // Projektile bewegen
             for (Projektiel projektiel : projektiele){
-                projektiel.projektielBewegen();
+                if (projektiel.getTower().getTowerTyp() == 7){
+                    projektiel.moerserProjektielBewegen(moerserZielX, moerserZielY);
+                }else if(projektiel.getTower().getTowerTyp() == 8){
+                    projektiel.moerserProjektielBewegen(fallenlegerZielX, fallenlegerZielY);
+                }else{
+                    projektiel.projektielBewegen();
+                }
             }
 
 
@@ -718,171 +745,252 @@ public class GamePanel extends JPanel
                 int projektilY = (int) projektiel.getY();
 
 
-                // Normaler Gegner
-                for (int i = enemies.size() - 1; i >= 0; i--){
 
-                    Enemy enemy = enemies.get(i);
+                if (projektiel.getTower().getTowerTyp() != 7 && projektiel.getTower().getTowerTyp() != 8) {
+                    // Normaler Gegner
+                    for (int i = enemies.size() - 1; i >= 0; i--) {
 
-                    int enemyX = enemy.getX();
-                    int enemyY = enemy.getY();
+                        Enemy enemy = enemies.get(i);
+
+                        int enemyX = enemy.getX();
+                        int enemyY = enemy.getY();
 
 
-                    if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
+                        if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30) {
 
-                        if (!projektiel.hatGegnerScchonGetroffen(enemy)) {
+                            if (!projektiel.hatGegnerScchonGetroffen(enemy)) {
 
-                            enemy.schadenNehmen(projektiel.getTower().getDemage());
+                                if (projektiel.getTower().getTowerTyp() == 4){
+                                    enemy.slow(2000);
+                                }
 
-                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
+                                enemy.schadenNehmen(projektiel.getTower().getDemage());
 
-                            if (enemy.getLeben() <= 0) {
+                                Sound.abspielen("sounds/pop.wav", popLautstaerke);
 
-                                enemies.remove(i);
-                                geld += 5;
-                                gegnerAufBildschirm -= 1;
+                                if (enemy.getLeben() <= 0) {
 
-                                gegnerGetoetet += 1;
-                                totalGeld += 5;
+                                    enemies.remove(i);
+                                    geld += 5;
+                                    gegnerAufBildschirm -= 1;
+
+                                    gegnerGetoetet += 1;
+                                    totalGeld += 5;
+                                }
+
+
+                                projektiel.getroffen();
+
+                                projektiel.gegnerSpeichern(enemy);
+                            }
+                            break;
+                        }
+                    }
+
+                    if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()) {
+                        projektiele.remove(p);
+                        continue;
+                    }
+
+
+                    // Schneller Gegner
+                    for (int i = fastEnemies.size() - 1; i >= 0; i--) {
+
+                        FastEnemy fastEnemy = fastEnemies.get(i);
+
+                        int enemyX = fastEnemy.getX();
+                        int enemyY = fastEnemy.getY();
+
+
+                        if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30) {
+
+                            if (!projektiel.hatGegnerScchonGetroffen(fastEnemy)) {
+
+                                if (projektiel.getTower().getTowerTyp() == 4){
+                                    fastEnemy.slow(2000);
+                                }
+
+                                fastEnemy.schadenNehmen(projektiel.getTower().getDemage());
+
+                                Sound.abspielen("sounds/pop.wav", popLautstaerke);
+
+                                if (fastEnemy.getLeben() <= 0) {
+
+                                    fastEnemies.remove(i);
+                                    geld += 7;
+                                    gegnerAufBildschirm -= 1;
+
+                                    gegnerGetoetet += 1;
+                                    totalGeld += 7;
+                                }
+
+                                projektiel.getroffen();
+                                projektiel.gegnerSpeichern(fastEnemy);
+                            }
+                            break;
+                        }
+                    }
+
+                    if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()) {
+                        projektiele.remove(p);
+                        continue;
+                    }
+
+
+                    // Starker Gegner
+                    for (int i = strongEnemies.size() - 1; i >= 0; i--) {
+
+                        StrongEnemy strongEnemy = strongEnemies.get(i);
+
+                        int enemyX = strongEnemy.getX();
+                        int enemyY = strongEnemy.getY();
+
+                        if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30) {
+
+                            if (!projektiel.hatGegnerScchonGetroffen(strongEnemy)) {
+
+                                if (projektiel.getTower().getTowerTyp() == 4){
+                                    strongEnemy.slow(2000);
+                                }
+
+                                strongEnemy.schadenNehmen(projektiel.getTower().getDemage());
+
+                                Sound.abspielen("sounds/pop.wav", popLautstaerke);
+
+                                if (strongEnemy.getLeben() <= 0) {
+
+                                    strongEnemies.remove(i);
+                                    geld += 10;
+                                    gegnerAufBildschirm -= 1;
+
+                                    gegnerGetoetet += 1;
+                                    totalGeld += 10;
+                                }
+
+                                projektiel.getroffen();
+                                projektiel.gegnerSpeichern(strongEnemy);
+
                             }
 
-
-                            projektiel.getroffen();
-
-                            projektiel.gegnerSpeichern(enemy);
+                            break;
                         }
-                        break;
                     }
-                }
 
-                if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()){
-                    projektiele.remove(p);
-                    continue;
-                }
-
-
-                // Schneller Gegner
-                for (int i = fastEnemies.size() - 1; i >= 0; i--){
-
-                    FastEnemy fastEnemy = fastEnemies.get(i);
-
-                    int enemyX = fastEnemy.getX();
-                    int enemyY = fastEnemy.getY();
+                    if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()) {
+                        projektiele.remove(p);
+                        continue;
+                    }
 
 
-                    if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
+                    // Boss
+                    for (int i = bosses.size() - 1; i >= 0; i--) {
 
-                        if (!projektiel.hatGegnerScchonGetroffen(fastEnemy)) {
+                        Boss boss = bosses.get(i);
 
-                            fastEnemy.schadenNehmen(projektiel.getTower().getDemage());
+                        int enemyX = boss.getX();
+                        int enemyY = boss.getY();
 
-                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
+                        if (projektilX > enemyX - 15 && projektilX < enemyX + 35 && projektilY > enemyY - 15 && projektilY < enemyY + 35) {
 
-                            if (fastEnemy.getLeben() <= 0) {
+                            if (!projektiel.hatGegnerScchonGetroffen(boss)) {
 
-                                fastEnemies.remove(i);
-                                geld += 7;
-                                gegnerAufBildschirm -= 1;
+                                if (projektiel.getTower().getTowerTyp() == 4){
+                                    boss.slow(2000);
+                                }
 
-                                gegnerGetoetet += 1;
-                                totalGeld += 7;
+                                boss.schadenNehmen(projektiel.getTower().getDemage());
+
+                                Sound.abspielen("sounds/pop.wav", popLautstaerke);
+
+                                if (boss.getLeben() <= 0) {
+                                    bosses.remove(i);
+                                    geld += 100 + welle * 2;
+                                    gegnerAufBildschirm -= 1;
+
+                                    gegnerGetoetet += 1;
+                                    totalGeld += 100 + welle * 2;
+                                }
+
+                                projektiel.getroffen();
+                                projektiel.gegnerSpeichern(boss);
                             }
 
-                            projektiel.getroffen();
-                            projektiel.gegnerSpeichern(fastEnemy);
+                            break;
                         }
-                        break;
                     }
-                }
 
-                if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()){
-                    projektiele.remove(p);
-                    continue;
-                }
-
-
-                // Starker Gegner
-                for (int i = strongEnemies.size() - 1; i >= 0; i--){
-
-                    StrongEnemy strongEnemy = strongEnemies.get(i);
-
-                    int enemyX = strongEnemy.getX();
-                    int enemyY = strongEnemy.getY();
-
-                    if (projektilX > enemyX - 10 && projektilX < enemyX + 30 && projektilY > enemyY - 10 && projektilY < enemyY + 30){
-
-                        if (!projektiel.hatGegnerScchonGetroffen(strongEnemy)) {
-
-                            strongEnemy.schadenNehmen(projektiel.getTower().getDemage());
-
-                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
-
-                            if (strongEnemy.getLeben() <= 0) {
-
-                                strongEnemies.remove(i);
-                                geld += 10;
-                                gegnerAufBildschirm -= 1;
-
-                                gegnerGetoetet += 1;
-                                totalGeld += 10;
-                            }
-
-                            projektiel.getroffen();
-                            projektiel.gegnerSpeichern(strongEnemy);
-
-                        }
-
-                        break;
+                    if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()) {
+                        projektiele.remove(p);
+                        continue;
                     }
-                }
-
-                if ( projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing() ){
-                    projektiele.remove(p);
-                    continue;
-                }
-
-
-                // Boss
-                for (int i = bosses.size() - 1; i >= 0; i--){
-
-                    Boss boss = bosses.get(i);
-
-                    int enemyX = boss.getX();
-                    int enemyY = boss.getY();
-
-                    if (projektilX > enemyX - 15 && projektilX < enemyX + 35 && projektilY > enemyY - 15 && projektilY < enemyY + 35){
-
-                        if (!projektiel.hatGegnerScchonGetroffen(boss)) {
-
-                            boss.schadenNehmen(projektiel.getTower().getDemage());
-
-                            Sound.abspielen("sounds/pop.wav", popLautstaerke);
-
-                            if (boss.getLeben() <= 0) {
-                                bosses.remove(i);
-                                geld += 100 + welle * 2;
-                                gegnerAufBildschirm -= 1;
-
-                                gegnerGetoetet += 1;
-                                totalGeld += 100 + welle * 2;
-                            }
-
-                            projektiel.getroffen();
-                            projektiel.gegnerSpeichern(boss);
-                        }
-
-                        break;
-                    }
-                }
-
-                if (projektiel.getTower() != null && projektiel.getGetroffen() >= projektiel.getTower().getPearcing()){
-                    projektiele.remove(p);
-                    continue;
                 }
 
 
                 if (projektilX > SPIEL_BREITE || projektilX < 0 ||
                         projektilY > SPIEL_HOEHE || projektilY < 0){
                     projektiele.remove(p);
+                }
+
+                if (projektiel.getTower().getTowerTyp() == 7){
+                    if (projektiel.getX() == moerserZielX && projektiel.getY() == moerserZielY){
+                        //Einfache Gegner
+                        for (int i = enemies.size() - 1; i >= 0; i--) {
+                            Enemy enemy = enemies.get(i);
+                            if (Math.abs(enemy.getX() - moerserZielX) < 60 && Math.abs(enemy.getY() - moerserZielY) < 60){
+                                enemies.remove(i);
+                                gegnerAufBildschirm -= 1;
+                            }
+                        }
+                        //Schnelle Gegner
+                        for (int i = fastEnemies.size() - 1; i >= 0; i--) {
+                            FastEnemy fastEnemy = fastEnemies.get(i);
+                            if (Math.abs(fastEnemy.getX() - moerserZielX) < 60 && Math.abs(fastEnemy.getY() - moerserZielY) < 60){
+                                fastEnemies.remove(i);
+                                gegnerAufBildschirm -= 1;
+                            }
+                        }
+                        //Starke Gegner
+                        for (int i = strongEnemies.size() - 1; i >= 0; i--) {
+                            StrongEnemy strongEnemy = strongEnemies.get(i);
+                            if (Math.abs(strongEnemy.getX() - moerserZielX) < 60 && Math.abs(strongEnemy.getY() - moerserZielY) < 60){
+                                strongEnemies.remove(i);
+                                gegnerAufBildschirm -= 1;
+                            }
+                        }
+
+
+                        projektiele.remove(p);
+                    }
+                }
+
+                if (projektiel.getTower().getTowerTyp() == 8){
+                    //Einfacher Gegner
+                    for (int i = enemies.size() - 1; i >= 0; i--) {
+                        Enemy enemy = enemies.get(i);
+                        if (Math.abs(enemy.getX() - fallenlegerZielX) < 30 && Math.abs(enemy.getY() - fallenlegerZielY) < 30){
+                            enemies.remove(i);
+                            gegnerAufBildschirm -= 1;
+                            projektiele.remove(p);
+                        }
+                    }
+                    //Schnelle Gegner
+                    for (int i = fastEnemies.size() - 1; i >= 0; i--) {
+                        FastEnemy fastEnemy = fastEnemies.get(i);
+                        if (Math.abs(fastEnemy.getX() - fallenlegerZielX) < 30 && Math.abs(fastEnemy.getY() - fallenlegerZielY) < 30){
+                            fastEnemies.remove(i);
+                            gegnerAufBildschirm -= 1;
+                            projektiele.remove(p);
+                        }
+                    }
+                    //Starke Gegner
+                    for (int i = strongEnemies.size() - 1; i >= 0; i--) {
+                        StrongEnemy strongEnemy = strongEnemies.get(i);
+                        if (Math.abs(strongEnemy.getX() - fallenlegerZielX) < 30 && Math.abs(strongEnemy.getY() - fallenlegerZielY) < 30){
+                            strongEnemies.remove(i);
+                            gegnerAufBildschirm -= 1;
+                            projektiele.remove(p);
+                        }
+                    }
                 }
 
             }
@@ -1054,6 +1162,7 @@ public class GamePanel extends JPanel
         for (Enemy enemy : enemies) {
 
             enemy.normalEnemySpawn(g2);
+
         }
 
 
@@ -1156,6 +1265,13 @@ public class GamePanel extends JPanel
         if (upgradeMenueOffen && ausgewaehlterTower != null) {
 
             upgradePanel.towerUpgrademenue(g2, ausgewaehlterTower);
+
+            if (ausgewaehlterTower.getTowerTyp() == 7){
+                g2.drawOval(moerserZielX -15, moerserZielY-15, 30, 30);
+            }
+            if (ausgewaehlterTower.getTowerTyp() == 8){
+                g2.drawOval(fallenlegerZielX -15, fallenlegerZielY -15, 30, 30);
+            }
         }
 
         // Bank Upgrade Menue
@@ -1577,6 +1693,24 @@ public class GamePanel extends JPanel
                 return;
             }
 
+            //Ziel setzten (Mörser)
+            if (ausgewaehlterTower.getTowerTyp() == 7){
+                if (Math.abs(mousex - ausgewaehlterTower.getMousex()) < ausgewaehlterTower.getReichweite() &&
+                        Math.abs(mousey - ausgewaehlterTower.getMousey()) < ausgewaehlterTower.getReichweite()){
+                    moerserZielX = mousex;
+                    moerserZielY = mousey;
+                }
+            }
+
+            //Ziel setzten (Fallenlegr)
+            if(ausgewaehlterTower.getTowerTyp() == 8){
+                if (Math.abs(mousex - ausgewaehlterTower.getMousex()) < ausgewaehlterTower.getReichweite() &&
+                        Math.abs(mousey - ausgewaehlterTower.getMousey()) < ausgewaehlterTower.getReichweite()) {
+                    fallenlegerZielX = mousex;
+                    fallenlegerZielY = mousey;
+                }
+            }
+
 
             // Solange das Menue offen ist,
             // kann kein Tower dahinter gesetzt werden
@@ -1690,7 +1824,39 @@ public class GamePanel extends JPanel
                             if (tower.istPlatzFrei(mousex, mousey, plaziertx, plazierty) &&
                                     bank.istPlatzFrei(mousex, mousey, plaziertx, plazierty)) {
 
-                                if (typ <= 9) {
+                                if (typ <= 9 && typ != 7 && typ != 8) {
+
+                                    tower.newTower(mousex, mousey, typ);
+                                    geld -= tower.getKosten(typ);
+
+                                    plaziertx.add(mousex);
+
+                                    plazierty.add(mousey);
+
+                                    towers.add(tower);
+
+                                    repaint();
+                                }
+
+                                //Mörser
+                                if (typ == 7){
+                                    moerserZielX = mousex - tower.getReichweite() / 2;
+                                    moerserZielY = mousey;
+                                    tower.newTower(mousex, mousey, typ);
+                                    geld -= tower.getKosten(typ);
+
+                                    plaziertx.add(mousex);
+
+                                    plazierty.add(mousey);
+
+                                    towers.add(tower);
+
+                                    repaint();
+                                }
+                                //Fallenleger
+                                if (typ == 8){
+                                    fallenlegerZielX = mousex - tower.getReichweite() / 2;
+                                    fallenlegerZielY = mousey;
                                     tower.newTower(mousex, mousey, typ);
                                     geld -= tower.getKosten(typ);
 

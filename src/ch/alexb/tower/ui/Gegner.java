@@ -14,6 +14,14 @@ public class Gegner {
 
     protected int aktuellerWegPunkt = 1;
 
+    protected boolean verlangsamt = false;
+    protected long slowBis = 0;;
+
+
+    public void slow(long dauer) {
+        verlangsamt = true;
+        slowBis = System.currentTimeMillis() + dauer;
+    }
 
     public int getX(){
 
@@ -47,6 +55,18 @@ public class Gegner {
 
     public void bewegen(ArrayList<Point> wegPunkte){
 
+        if (verlangsamt && System.currentTimeMillis() > slowBis) {
+            verlangsamt = false;
+        }
+
+        double aktuelleGeschwindigkeit;
+
+        if (verlangsamt) {
+            aktuelleGeschwindigkeit = geschwindigkeit * 0.5;
+        } else {
+            aktuelleGeschwindigkeit = geschwindigkeit;
+        }
+
         if (aktuellerWegPunkt >= wegPunkte.size()){
             return;
         }
@@ -70,8 +90,8 @@ public class Gegner {
         }
 
 
-        x += dx / entfernung * geschwindigkeit;
-        y += dy / entfernung * geschwindigkeit;
+        x += dx / entfernung * aktuelleGeschwindigkeit;
+        y += dy / entfernung * aktuelleGeschwindigkeit;
     }
 
 
@@ -127,5 +147,10 @@ public class Gegner {
 
     public int getAktuellerWegPunkt(){
         return aktuellerWegPunkt;
+    }
+
+
+    public boolean isVerlangsamt(){
+        return verlangsamt;
     }
 }

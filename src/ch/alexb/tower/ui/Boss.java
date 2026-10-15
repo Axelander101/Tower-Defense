@@ -20,7 +20,17 @@ public class Boss extends Gegner {
         g.setColor(Color.GREEN);
 
         g.fillOval((int) x - 15, (int) y - 15, 30, 30);
+
+        if (verlangsamt) {
+            g.setColor(new Color(100, 180, 255, 70));
+            g.fillOval((int) x -15, (int) y -15, 30, 30);
+
+            g.setColor(new Color(120, 200, 255));
+            g.drawOval((int) x -15, (int) y -15, 30, 30);
+        }
     }
+
+
 
 
 

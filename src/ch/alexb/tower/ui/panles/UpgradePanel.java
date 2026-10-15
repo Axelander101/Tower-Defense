@@ -18,6 +18,12 @@ public class UpgradePanel extends JPanel {
 
     public void towerUpgrademenue(Graphics g2, Tower tower){
 
+        g2.setColor(Color.BLACK);
+        int radius = tower.getReichweite();
+
+        g2.drawOval(tower.getMousex() - radius, tower.getMousey() - radius, radius * 2, radius * 2);
+
+
         g2.setColor(Color.WHITE);
 
         g2.fillRect(700, 0, 300, 700);

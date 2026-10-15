@@ -420,5 +420,12 @@ public class Tower {
         return shootdelay;
     }
 
+    public int getTowerTyp(){
+        return TowerTyp;
+    }
+
+    public int getReichweite() {
+        return reichweite;
+    }
 
 }
