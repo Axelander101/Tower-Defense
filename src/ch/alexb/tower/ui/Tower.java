@@ -32,6 +32,8 @@ public class Tower {
 
     private long letzterSchuss = 0;
 
+    private boolean ultimateGekauft = false;
+
 
 
     public boolean kannSchiessen(int delay) {
@@ -468,6 +470,10 @@ public class Tower {
 
         return kosten;
 
+    }
+
+    public boolean isUltimateGekauft(){
+        return ultimateGekauft;
     }
 
     public int getDemage(){
