@@ -1632,67 +1632,422 @@ public class GamePanel extends JPanel
             }
 
 
-            // Reach Upgrade
+            // Upgradepath 1 kaufen
             if (mousex > 725 && mousex < 885 && mousey > 65 && mousey < 135){
 
-                int kosten = ausgewaehlterTower.getReachKosten();
+                //Einfacher Turm und Sniper
+                if (ausgewaehlterTower.getTowerTyp() <= 2) {
+                    int kosten = ausgewaehlterTower.getReachKosten();
 
 
-                if (ausgewaehlterTower.getReachUpgradesGekauft() < 3 && geld >= kosten){
+                    if (ausgewaehlterTower.getReachUpgradesGekauft() < 4 && geld >= kosten) {
 
-                    geld -= kosten;
+                        geld -= kosten;
 
-                    ausgewaehlterTower.reachUpgradeKaufen();
+                        ausgewaehlterTower.reachUpgradeKaufen();
 
-                    ausgewaehlterTower.rueckerstattung(kosten);
+                        ausgewaehlterTower.rueckerstattung(kosten);
 
-                    repaint();
+                        repaint();
+                    }
+
+
+                    return;
                 }
+                if (ausgewaehlterTower.getTowerTyp() == 3){
+                    int kosten = ausgewaehlterTower.getShotgunArmorKosten();
 
 
-                return;
+                    if (ausgewaehlterTower.getArmorUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.shotgunArmorUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 4){
+                    int kosten = ausgewaehlterTower.getColdKosten();
+
+
+                    if (ausgewaehlterTower.getColdUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.coldUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 5){
+                    int kosten = ausgewaehlterTower.getNetworkKosten();
+
+
+                    if (ausgewaehlterTower.getNetworkUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.networkUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 6){
+                    int kosten = ausgewaehlterTower.getChargeKosten();
+
+
+                    if (ausgewaehlterTower.getChargeUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.chargeUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 7){
+                    int kosten = ausgewaehlterTower.getPrecisionKosten();
+
+
+                    if (ausgewaehlterTower.getPrecisionUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.precisionUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 8){
+                    int kosten = ausgewaehlterTower.getStockKosten();
+
+
+                    if (ausgewaehlterTower.getStockUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.stockUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 9){
+                    int kosten = ausgewaehlterTower.getMilitaryKosten();
+
+
+                    if (ausgewaehlterTower.getMilitaryUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.militaryUpgradeKaufen();
+
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
             }
 
 
-            // Demage Upgrade
+            // Upgradepath 2 kaufen
             if (mousex > 725 && mousex < 885 && mousey > 165 && mousey < 235){
 
-                int kosten = ausgewaehlterTower.getDemageKosten();
+                if (ausgewaehlterTower.getTowerTyp() <= 3) {
+                    int kosten = ausgewaehlterTower.getDemageKosten();
 
 
-                if (ausgewaehlterTower.getDemageUpgradesGekauft() < 3 && geld >= kosten){
+                    if (ausgewaehlterTower.getDemageUpgradesGekauft() < 4 && geld >= kosten) {
 
-                    geld -= kosten;
+                        geld -= kosten;
 
-                    ausgewaehlterTower.demageUpgradeKaufen();
-                    ausgewaehlterTower.rueckerstattung(kosten);
+                        ausgewaehlterTower.demageUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
 
-                    repaint();
+                        repaint();
+                    }
+
+
+                    return;
                 }
+                if (ausgewaehlterTower.getTowerTyp() == 4) {
+                    int kosten = ausgewaehlterTower.getBrittleKosten();
 
 
-                return;
+                    if (ausgewaehlterTower.getBrittleUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.brittleUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 5) {
+                    int kosten = ausgewaehlterTower.getHunterKosten();
+
+
+                    if (ausgewaehlterTower.getHunterUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.hunterUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 6) {
+                    int kosten = ausgewaehlterTower.getShockwaveKosten();
+
+
+                    if (ausgewaehlterTower.getShockwaveUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.shockwaveUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 7) {
+                    int kosten = ausgewaehlterTower.getMortarFireKosten();
+
+
+                    if (ausgewaehlterTower.getFireUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.mortarFireUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 8) {
+                    int kosten = ausgewaehlterTower.getControlKosten();
+
+
+                    if (ausgewaehlterTower.getControlUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.controlUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 9) {
+                    int kosten = ausgewaehlterTower.getEconomyKosten();
+
+
+                    if (ausgewaehlterTower.getEconomyUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.economyUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
             }
 
 
-            // Pearcing Upgrade
+            // Upgradepath 3 kaufen
             if (mousex > 725 && mousex < 885 && mousey > 265 && mousey < 335){
 
-                int kosten = ausgewaehlterTower.getPearcingKosten();
+                if (ausgewaehlterTower.getTowerTyp() <= 2) {
+                    int kosten = ausgewaehlterTower.getPearcingKosten();
 
 
-                if (ausgewaehlterTower.getPearcingUpgradesGekauft() < 2 && geld >= kosten){
+                    if (ausgewaehlterTower.getPearcingUpgradesGekauft() < 4 && geld >= kosten) {
 
-                    geld -= kosten;
+                        geld -= kosten;
 
-                    ausgewaehlterTower.pearcingUpgradeKaufen();
-                    ausgewaehlterTower.rueckerstattung(kosten);
+                        ausgewaehlterTower.pearcingUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
 
-                    repaint();
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 3) {
+                    int kosten = ausgewaehlterTower.getShotgunFireRateKosten();
+
+
+                    if (ausgewaehlterTower.getFireRateUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.shotgunFireRateUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 4) {
+                    int kosten = ausgewaehlterTower.getPermafrostKosten();
+
+
+                    if (ausgewaehlterTower.getPermafrostUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.permafrostUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 5) {
+                    int kosten = ausgewaehlterTower.getBossRadarKosten();
+
+
+                    if (ausgewaehlterTower.getBossUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.bossRadarUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 6) {
+                    int kosten = ausgewaehlterTower.getArmorBreakerRadiusKosten();
+
+
+                    if (ausgewaehlterTower.getRadiusUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.armorBreakerRadiusUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 7) {
+                    int kosten = ausgewaehlterTower.getMortarRadiusKosten();
+
+
+                    if (ausgewaehlterTower.getMortarRadiusUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.mortarRadiusUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 8) {
+                    int kosten = ausgewaehlterTower.getTrapDamageKosten();
+
+
+                    if (ausgewaehlterTower.getTrapDamageUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.trapDamageUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
+                }
+                if (ausgewaehlterTower.getTowerTyp() == 9) {
+                    int kosten = ausgewaehlterTower.getTechnologyKosten();
+
+
+                    if (ausgewaehlterTower.getTechnologyUpgradesGekauft() < 4 && geld >= kosten) {
+
+                        geld -= kosten;
+
+                        ausgewaehlterTower.technologyUpgradeKaufen();
+                        ausgewaehlterTower.rueckerstattung(kosten);
+
+                        repaint();
+                    }
+
+
+                    return;
                 }
 
-
-                return;
             }
 
             //Ziel setzten (Mörser)

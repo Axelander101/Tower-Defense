@@ -52,10 +52,10 @@ public class UpgradePanel extends JPanel {
             }
 
             // Pearcing
-            if (tower.getPearcingUpgradesGekauft() == 2 && !tower.isUltimateGekauft()){
+            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Shatter Cannon", "More piercing and damage", 30_160);
             }else {
-                upgradeBox(g2, 725, 265, "Piercing Ammo", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Piercing Ammo", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
             }
         }
         //Sniper Upgrades
@@ -76,19 +76,19 @@ public class UpgradePanel extends JPanel {
             }
 
             // Pearcing
-            if (tower.getPearcingUpgradesGekauft() == 2 && !tower.isUltimateGekauft()){
+            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Hyper Railgun", "More piercing and damage", 30_160);
             }else {
-                upgradeBox(g2, 725, 265, "Armor Piercing Rounds", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Armor Piercing Rounds", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
             }
         }
         //Shotgun Upgrades
         if (tower.getTowerTyp() == 3){
-            // Reach
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            // Armor
+            if (tower.getArmorUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Armorstorm", "More armor damage", 32_175);
             }else{
-                upgradeBox(g2, 725, 65, "Hardened Pellets", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Hardened Pellets", "+25 reach", tower.getArmorUpgradesGekauft(), 3, tower.getShotgunArmorKosten());
             }
 
             // Demage
@@ -98,78 +98,78 @@ public class UpgradePanel extends JPanel {
                 upgradeBox(g2, 725, 165, "Heavy Shells", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
             }
 
-            // Pearcing
-            if (tower.getPearcingUpgradesGekauft() == 2 && !tower.isUltimateGekauft()){
+            // Fire Rate
+            if (tower.getFireRateUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Chain Reaction", "More firerate and splash", 29_155);
             }else {
-                upgradeBox(g2, 725, 265, "Rapid Action", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Rapid Action", "More fire rate", tower.getFireRateUpgradesGekauft(), 3, tower.getShotgunFireRateKosten());
             }
         }
         //Eis Turm Upgrades
         if (tower.getTowerTyp() == 4){
             // Cold
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            if (tower.getColdUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Absolute Zero", "Stronger and longer slow", 30_160);
             }else{
-                upgradeBox(g2, 725, 65, "Deep Freeze", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Deep Freeze", "Stronger slow", tower.getColdUpgradesGekauft(), 3, tower.getColdKosten());
             }
 
             // Brittle
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getBrittleUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Crystal Fracture", "More damage to slowed", 30_160);
-            }else if (tower.getDemageUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 165, "Frozen Impact", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
-            }else if (tower.getDemageUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 165, "Brittle Ice", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if (tower.getBrittleUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 165, "Frozen Impact", "More damage taken", tower.getBrittleUpgradesGekauft(), 3, tower.getBrittleKosten());
+            }else if (tower.getBrittleUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 165, "Brittle Ice", "More damage taken", tower.getBrittleUpgradesGekauft(), 3, tower.getBrittleKosten());
             }else {
-                upgradeBox(g2, 725, 165, "Crystal Weakness", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Crystal Weakness", "More damage to slowed", tower.getBrittleUpgradesGekauft(), 3, tower.getBrittleKosten());
             }
 
             // Permafrost / Range
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getPermafrostUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Glacial Storm", "More range and slow", 31_170);
-            }else if (tower.getPearcingUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 265, "Extended Frost Range", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
-            }else if (tower.getPearcingUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 265, "Lingering Frost", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+            }else if (tower.getPermafrostUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 265, "Extended Frost Range", "More frost range", tower.getPermafrostUpgradesGekauft(), 3, tower.getPermafrostKosten());
+            }else if (tower.getPermafrostUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 265, "Lingering Frost", "Longer slow", tower.getPermafrostUpgradesGekauft(), 3, tower.getPermafrostKosten());
             }else{
-                upgradeBox(g2, 725, 265, "Permafrost", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Permafrost", "Stronger slow", tower.getPermafrostUpgradesGekauft(), 3, tower.getPermafrostKosten());
             }
         }
         //Detector Upgrades
         if (tower.getTowerTyp() == 5){
             // Network
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            if (tower.getNetworkUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Omni Radar", "More detection range", 29_155);
-            }else if (tower.getReachUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 65, "Extended Radar", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
-            }else if(tower.getReachUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 65, "Detection Relay", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+            }else if (tower.getNetworkUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 65, "Extended Radar", "More range", tower.getNetworkUpgradesGekauft(), 3, tower.getNetworkKosten());
+            }else if(tower.getNetworkUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 65, "Detection Relay", "Shares detection", tower.getNetworkUpgradesGekauft(), 3, tower.getNetworkKosten());
             }else{
-                upgradeBox(g2, 725, 65, "Detection Network", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Detection Network", "More support range", tower.getNetworkUpgradesGekauft(), 3, tower.getNetworkKosten());
             }
 
             // Hunter
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getHunterUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Phantom Hunter", "More invisible enemy damage", 27_145);
-            }else if (tower.getDemageUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 165, "Target Analysis", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
-            }else if(tower.getDemageUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 165, "Ghost Tracking", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if (tower.getHunterUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 165, "Target Analysis", "More invisible damage", tower.getHunterUpgradesGekauft(), 3, tower.getHunterKosten());
+            }else if(tower.getHunterUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 165, "Ghost Tracking", "More invisible damage", tower.getHunterUpgradesGekauft(), 3, tower.getHunterKosten());
             }else {
-                upgradeBox(g2, 725, 165, "Silent Hunter", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Silent Hunter", "More invisible damage", tower.getHunterUpgradesGekauft(), 3, tower.getHunterKosten());
             }
 
 
             // Boss Radar
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getBossUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Target Designator", "More allied tower damage", 30_160);
-            }else if (tower.getPearcingUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 265, "Combat Radar", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
-            }else if (tower.getPearcingUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 265, "Elite Scanner", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+            }else if (tower.getBossUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 265, "Combat Radar", "More boss damage", tower.getBossUpgradesGekauft(), 3, tower.getBossRadarKosten());
+            }else if (tower.getBossUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 265, "Elite Scanner", "More boss damage", tower.getBossUpgradesGekauft(), 3, tower.getBossRadarKosten());
             }else{
-                upgradeBox(g2, 725, 265, "Boss Radar", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Boss Radar", "More boss damage", tower.getBossUpgradesGekauft(), 3, tower.getBossRadarKosten());
             }
 
 
@@ -177,119 +177,119 @@ public class UpgradePanel extends JPanel {
         //Bomber
         if (tower.getTowerTyp() == 6){
             // Charge
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            if (tower.getChargeUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Worldbreaker", "More armor and boss damage", 29_155);
             }else{
-                upgradeBox(g2, 725, 65, "Shaped Charge", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Shaped Charge", "More armor damage", tower.getChargeUpgradesGekauft(), 3, tower.getChargeKosten());
             }
 
             // Shockwave
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getShockwaveUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Shock Core", "More splash and firerate", 27_145);
-            }else if(tower.getDemageUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 165, "Heavy Warhead", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
-            }else if(tower.getDemageUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 165, "Shockwave Amplifier", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if(tower.getShockwaveUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 165, "Heavy Warhead", "More damage", tower.getShockwaveUpgradesGekauft(), 3, tower.getShockwaveKosten());
+            }else if(tower.getShockwaveUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 165, "Shockwave Amplifier", "More splash", tower.getShockwaveUpgradesGekauft(), 3, tower.getShockwaveKosten());
             }else{
-                upgradeBox(g2, 725, 165, "Shockwave", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Shockwave", "Hits immune enemies", tower.getShockwaveUpgradesGekauft(), 3, tower.getShockwaveKosten());
             }
 
             // Radius
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getRadiusUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Armor Shredder", "More armor penetration", 30_160);
             }else {
-                upgradeBox(g2, 725, 265, "Blast Radius", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Blast Radius", "Larger explosion", tower.getRadiusUpgradesGekauft(), 3, tower.getArmorBreakerRadiusKosten());
             }
         }
         //Mörser
         if (tower.getTowerTyp() == 7){
             // Precision
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            if (tower.getPrecisionUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Siege Battery", "More damage and firerate", 29_155);
-            }else if (tower.getReachUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 65, "Precision Targeting", "+25 reach", tower.getReachUpgradesGekauft(), 2, tower.getReachKosten());
-            }else if (tower.getReachUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 65, "Reinforced Shells", "+25 reach", tower.getReachUpgradesGekauft(), 2, tower.getReachKosten());
+            }else if (tower.getPrecisionUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 65, "Precision Targeting", "More damage", tower.getPrecisionUpgradesGekauft(), 2, tower.getPrecisionKosten());
+            }else if (tower.getPrecisionUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 65, "Reinforced Shells", "More damage", tower.getPrecisionUpgradesGekauft(), 2, tower.getPrecisionKosten());
             }else{
-                upgradeBox(g2, 725, 65, "Bunker Buster", "+25 reach", tower.getReachUpgradesGekauft(), 2, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Bunker Buster", "Hits armor", tower.getPrecisionUpgradesGekauft(), 2, tower.getPrecisionKosten());
             }
 
             // Fire
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getFireUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Napalm Barrage", "More fire damage", 27_145);
-            }else if (tower.getDemageUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 165, "Heavy Shells", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
-            }else if (tower.getDemageUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 165, "Incendiary Shells", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if (tower.getFireUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 165, "Heavy Shells", "More damage", tower.getFireUpgradesGekauft(), 3, tower.getMortarFireKosten());
+            }else if (tower.getFireUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 165, "Incendiary Shells", "Adds burn damage", tower.getFireUpgradesGekauft(), 3, tower.getMortarFireKosten());
             }else{
-                upgradeBox(g2, 725, 165, "Burning Payload", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Burning Payload", "Longer burn", tower.getFireUpgradesGekauft(), 3, tower.getMortarFireKosten());
             }
 
             // Radius
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getMortarRadiusUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Cluster Barrage", "More splash damage", 30_160);
             }else {
-                upgradeBox(g2, 725, 265, "Blast Radius", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Blast Radius", "Larger explosion", tower.getMortarRadiusUpgradesGekauft(), 3, tower.getMortarRadiusKosten());
             }
         }
         //Fallenleger
         if (tower.getTowerTyp() == 8){
-            // Stock
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            // Fire Rate
+            if (tower.getStockUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Minefield", "More persistent mines", 29_155);
             }else{
-                upgradeBox(g2, 725, 65, "Trap Stock", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Trap Stock", "More fire rate", tower.getStockUpgradesGekauft(), 3, tower.getStockKosten());
             }
 
             // Control
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getControlUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Containment Grid", "More traps and slow", 27_145);
-            }else if (tower.getDemageUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 165, "Reinforced Traps", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
-            }else if (tower.getDemageUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 165, "Anchored Traps", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if (tower.getControlUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 165, "Reinforced Traps", "Longer lifetime", tower.getControlUpgradesGekauft(), 3, tower.getControlKosten());
+            }else if (tower.getControlUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 165, "Anchored Traps", "Longer lifetime", tower.getControlUpgradesGekauft(), 3, tower.getControlKosten());
             }else{
-                upgradeBox(g2, 725, 165, "Persistent Traps", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Persistent Traps", "Traps stay", tower.getControlUpgradesGekauft(), 3, tower.getControlKosten());
             }
 
             // Damage
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getTrapDamageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Hunter Mines", "More boss and armor damage", 30_160);
             }else {
-                upgradeBox(g2, 725, 265, "Sharpened Traps", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 3, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Sharpened Traps", "+1 demage", tower.getTrapDamageUpgradesGekauft(), 3, tower.getTrapDamageKosten());
             }
         }
         //Dorf
         if (tower.getTowerTyp() == 9){
             // Military
-            if (tower.getReachUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
+            if (tower.getMilitaryUpgradesGekauft() == 3 && !tower.isUltimateGekauft()) {
                 ultimateUpgradeBox(g2, 725, 65, "Command Center", "More damage and firerate", 29_155);
-            }else if (tower.getReachUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 65, "Attack Speed Boost", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
-            }else if (tower.getReachUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 65, "Combat Training", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+            }else if (tower.getMilitaryUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 65, "Attack Speed Boost", "More fire rate", tower.getMilitaryUpgradesGekauft(), 3, tower.getMilitaryKosten());
+            }else if (tower.getMilitaryUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 65, "Combat Training", "More tower damage", tower.getMilitaryUpgradesGekauft(), 3, tower.getMilitaryKosten());
             }else {
-                upgradeBox(g2, 725, 65, "Damage Boost", "+25 reach", tower.getReachUpgradesGekauft(), 3, tower.getReachKosten());
+                upgradeBox(g2, 725, 65, "Damage Boost", "More tower damage", tower.getMilitaryUpgradesGekauft(), 3, tower.getMilitaryKosten());
             }
 
             // Economy
-            if (tower.getDemageUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getEconomyUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 165, "Financial District", "More bank income", 27_145);
-            }else if (tower.getDemageUpgradesGekauft() > 2){
-                upgradeBox(g2, 725, 165, "Bank Support", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+            }else if (tower.getEconomyUpgradesGekauft() > 2){
+                upgradeBox(g2, 725, 165, "Bank Support", "More bank income", tower.getEconomyUpgradesGekauft(), 3, tower.getEconomyKosten());
             }else{
-                upgradeBox(g2, 725, 165, "Investment Network", "+1 damage", tower.getDemageUpgradesGekauft(), 3, tower.getDemageKosten());
+                upgradeBox(g2, 725, 165, "Investment Network", "More bank income", tower.getEconomyUpgradesGekauft(), 3, tower.getEconomyKosten());
             }
 
             // Technology
-            if (tower.getPearcingUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
+            if (tower.getTechnologyUpgradesGekauft() == 3 && !tower.isUltimateGekauft()){
                 ultimateUpgradeBox(g2, 725, 265, "Research Center", "More detection and piercing", 30_160);
-            }else if (tower.getPearcingUpgradesGekauft() == 0){
-                upgradeBox(g2, 725, 265, "Detection Support", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
-            }else if(tower.getPearcingUpgradesGekauft() == 1){
-                upgradeBox(g2, 725, 265, "Armor Piercing Support", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
+            }else if (tower.getTechnologyUpgradesGekauft() == 0){
+                upgradeBox(g2, 725, 265, "Detection Support", "More support range", tower.getTechnologyUpgradesGekauft(), 3, tower.getTechnologyKosten());
+            }else if(tower.getTechnologyUpgradesGekauft() == 1){
+                upgradeBox(g2, 725, 265, "Armor Piercing Support", "Shares detection", tower.getTechnologyUpgradesGekauft(), 3, tower.getTechnologyKosten());
             }else{
-                upgradeBox(g2, 725, 265, "Extended Support Range", "+1 pearcing", tower.getPearcingUpgradesGekauft(), 2, tower.getPearcingKosten());
+                upgradeBox(g2, 725, 265, "Extended Support Range", "Shares armor piercing", tower.getTechnologyUpgradesGekauft(), 3, tower.getTechnologyKosten());
             }
         }
 
@@ -354,7 +354,12 @@ public class UpgradePanel extends JPanel {
 
         g2.setFont(new Font("Arial", Font.PLAIN, 15));
 
-        g2.drawString(gekauft + "/" + max + "  " + titel, x + 5, y + 15);
+        if (gekauft == 4){
+            g2.drawString(gekauft + "/" + 4 + "  " + titel, x + 5, y + 15);
+        }else{
+            g2.drawString(gekauft + "/" + max + "  " + titel, x + 5, y + 15);
+        }
+
         g2.drawString(effekt, x + 5, y + 35);
 
         if (gekauft < max) {
